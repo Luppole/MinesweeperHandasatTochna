@@ -1,0 +1,24 @@
+<resources>
+
+    <!-- Base Theme -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Set primary colors -->
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primaryDark</item>
+        <item name="colorAccent">@color/secondary</item>
+
+        <!-- Set default font -->
+        <item name="android:fontFamily">@fonts/poppins</item>
+
+        <!-- Customize default EditText -->
+        <item name="editTextStyle">@style/CustomEditTextStyle</item>
+    </style>
+
+    <!-- Custom EditText Style -->
+    <style name="CustomEditTextStyle" parent="Widget.MaterialComponents.TextInputEditText.FilledBox">
+        <item name="android:background">@drawable/custom_edittext</item>
+        <item name="android:textColor">@color/textPrimary</item>
+        <item name="hintTextColor">@color/textSecondary</item>
+    </style>
+
+</resources>

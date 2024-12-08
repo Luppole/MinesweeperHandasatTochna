@@ -15,11 +15,20 @@
         android:layout_marginBottom="24dp" />
 
     <Button
+        android:id="@+id/playGameButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Play Game"
+        android:backgroundTint="@color/primary"
+        android:textColor="@android:color/white"
+        android:layout_marginBottom="16dp" />
+
+    <Button
         android:id="@+id/signOutButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Sign Out"
-        android:backgroundTint="@color/primary"
+        android:backgroundTint="@color/secondary"
         android:textColor="@android:color/white" />
 
 </LinearLayout>

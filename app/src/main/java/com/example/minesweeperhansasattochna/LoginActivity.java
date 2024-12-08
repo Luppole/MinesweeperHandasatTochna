@@ -7,31 +7,64 @@ import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.style.ClickableSpan;
 import android.text.style.StyleSpan;
-import android.text.style.UnderlineSpan;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 public class LoginActivity extends AppCompatActivity {
+
+    private FirebaseAuth mAuth;
+    private EditText emailField, passwordField;
+    private Button loginButton;
+    private TextView signupRedirect;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        TextView signupRedirect = findViewById(R.id.signupRedirect);
+        mAuth = FirebaseAuth.getInstance();
+        emailField = findViewById(R.id.emailField);
+        passwordField = findViewById(R.id.passwordField);
+        loginButton = findViewById(R.id.loginButton);
+        signupRedirect = findViewById(R.id.signupRedirect);
 
-        // Create a spannable string to underline and bold "Sign Up"
-        SpannableString spannableString = new SpannableString("Don't have an account? Sign Up");
+        // Handle Login Button Click
+        loginButton.setOnClickListener(v -> {
+            String email = emailField.getText().toString().trim();
+            String password = passwordField.getText().toString().trim();
 
-        // Bold "Sign Up"
-        spannableString.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 22, 29, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            if (email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(LoginActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
-        // Underline "Sign Up"
-        spannableString.setSpan(new UnderlineSpan(), 22, 29, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            mAuth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            Toast.makeText(LoginActivity.this, "Authentication failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        });
+
+        // Add Hyperlink to "Sign Up"
+        setSignupHyperlink();
+    }
+
+    private void setSignupHyperlink() {
+        String text = "Don't have an account? Sign Up";
+        SpannableString spannableString = new SpannableString(text);
 
         // Make "Sign Up" clickable
         ClickableSpan clickableSpan = new ClickableSpan() {
@@ -39,17 +72,20 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(@NonNull View widget) {
                 Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
                 startActivity(intent);
-                finish();
             }
 
             @Override
             public void updateDrawState(@NonNull TextPaint ds) {
                 super.updateDrawState(ds);
-                ds.setColor(getResources().getColor(R.color.secondary)); // Set link color
-                ds.setUnderlineText(true); // Keeps underline even on click
+                ds.setUnderlineText(true); // Add underline
             }
         };
-        spannableString.setSpan(clickableSpan, 22, 29, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        // Bold "Sign Up"
+        spannableString.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 23, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        // Apply ClickableSpan to "Sign Up"
+        spannableString.setSpan(clickableSpan, 23, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         signupRedirect.setText(spannableString);
         signupRedirect.setMovementMethod(android.text.method.LinkMovementMethod.getInstance());

@@ -2,9 +2,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="@android:color/darker_gray"
     android:orientation="vertical"
     android:gravity="center"
+
     android:padding="24dp">
 
     <TextView
@@ -12,7 +13,7 @@
         android:layout_height="wrap_content"
         android:text="Create Account"
         android:textSize="24sp"
-        android:textColor="@color/primary"
+        android:backgroundTint="@android:color/system_accent1_500"
         android:fontFamily="@fonts/poppins"
         android:layout_marginBottom="16dp" />
 
@@ -48,9 +49,10 @@
 
     <Button
         android:id="@+id/signupButton"
-        android:layout_width="match_parent"
+        android:layout_width="400px"
+        android:layout_margin="50px"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/primary"
+        android:backgroundTint="@android:color/system_accent1_500"
         android:text="Sign Up"
         android:textColor="@android:color/white"
         android:fontFamily="@fonts/poppins"
@@ -59,9 +61,10 @@
     <TextView
         android:id="@+id/loginRedirect"
         android:layout_width="wrap_content"
+        android:textStyle="bold"
         android:layout_height="wrap_content"
         android:text="Already have an account? Log In"
-        android:textColor="@color/secondary"
+        android:textColor="@color/textPrimary"
         android:fontFamily="@fonts/poppins"
         android:layout_marginTop="16dp"
         android:clickable="true"

@@ -2,39 +2,77 @@ package com.example.minesweeperhansasattochna;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.minesweeperhansasattochna.R;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
-
     private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         mAuth = FirebaseAuth.getInstance();
 
-        // Display welcome message with the user's email
-        TextView welcomeMessage = findViewById(R.id.welcomeMessage);
-        if (mAuth.getCurrentUser() != null) {
-            String email = mAuth.getCurrentUser().getEmail();
-            welcomeMessage.setText("Welcome, " + email + "!");
-        }
-
-        // Sign Out Button Logic
-        Button signOutButton = findViewById(R.id.signOutButton);
-        signOutButton.setOnClickListener(v -> {
+        Button logoutButton = findViewById(R.id.signOutButton);
+        logoutButton.setOnClickListener(v -> {
             mAuth.signOut(); // Sign out the user
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);
-            finish(); // Close the MainActivity
+            finish(); // Close the current activity
         });
+
+        // Play Game Button Logic to show the popup
+        Button playGameButton = findViewById(R.id.playGameButton);
+        playGameButton.setOnClickListener(this::onButtonShowPopupWindowClick);
+    }
+
+    public void onButtonShowPopupWindowClick(View view) {
+        // Inflate the layout of the popup window
+        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        View popupView = inflater.inflate(R.layout.activity_difficulty_popup, null);
+
+        // Create the popup window
+        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        boolean focusable = true; // Let taps outside the popup dismiss it
+        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+
+        // Show the popup window at the center of the screen
+        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+
+        // Find and set click listeners for difficulty buttons
+        Button easyButton = popupView.findViewById(R.id.easyButton);
+        Button mediumButton = popupView.findViewById(R.id.mediumButton);
+        Button hardButton = popupView.findViewById(R.id.hardButton);
+
+        easyButton.setOnClickListener(v -> {
+            popupWindow.dismiss();
+            startGameActivity("easy");
+        });
+
+        mediumButton.setOnClickListener(v -> {
+            popupWindow.dismiss();
+            startGameActivity("medium");
+        });
+
+        hardButton.setOnClickListener(v -> {
+            popupWindow.dismiss();
+            startGameActivity("hard");
+        });
+    }
+
+    private void startGameActivity(String difficulty) {
+        Intent intent = new Intent(MainActivity.this, GameActivity.class);
+        intent.putExtra("difficulty", difficulty); // Pass difficulty to GameActivity
+        startActivity(intent);
     }
 }

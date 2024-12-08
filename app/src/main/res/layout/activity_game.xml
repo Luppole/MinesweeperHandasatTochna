@@ -1,46 +1,136 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
+    android:padding="8dp"
     android:background="#F9F9F9">
 
-    <!-- Timer at the Top -->
-    <TextView
-        android:id="@+id/timer"
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+    </LinearLayout>
+    <!-- Timer and Personal Best Container -->
+    <LinearLayout
+        android:id="@+id/topInfoContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Time: 0"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="#333333"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16dp" />
+        android:orientation="horizontal"
+        android:background="#FFFFFF"
+        android:elevation="4dp"
+        android:layout_marginTop="6dp">
 
-    <!-- Dynamic Grid Layout for the Game Board -->
+        <!-- Timer -->
+        <TextView
+            android:id="@+id/timer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Time: 0"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:layout_marginEnd="16dp" />
+
+        <!-- Personal Best -->
+        <TextView
+            android:id="@+id/personalBest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Best: --"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#4CAF50" />
+    </LinearLayout>
+
+    <!-- Bomb Counter -->
+    <TextView
+        android:id="@+id/bombCounter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="Bombs: --"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#FF5722" />
+
+    <!-- Points -->
+    <TextView
+        android:id="@+id/points"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:text="Points: --"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#6200EE" />
+
+
+    <!-- Grid Layout for the game board -->
     <androidx.gridlayout.widget.GridLayout
         android:id="@+id/gridLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/timer"
+        android:layout_below="@+id/topInfoContainer"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="12dp"
         android:background="@android:color/white"
-        android:elevation="4dp"
-        android:padding="4dp" />
+        android:elevation="10dp"
+        android:padding="8dp" />
 
-    <!-- Reset Button -->
-    <Button
-        android:id="@+id/resetButton"
-        android:layout_width="wrap_content"
-        android:layout_height="120dp"
-        android:text="Reset"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:textColor="#FFFFFF"
-        android:backgroundTint="#6200EE"
-        android:layout_below="@id/gridLayout"
-        android:gravity="end" />
+    <!-- Bottom Button Container -->
+    <LinearLayout
+        android:id="@+id/buttonContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:weightSum="3">
+
+        <!-- Reset Button -->
+        <Button
+            android:id="@+id/resetButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:text="Reset"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#6200EE" />
+
+        <!-- Leaderboard Button -->
+        <Button
+            android:id="@+id/leaderboardButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:text="Leaderboard"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#03A9F4" />
+
+        <!-- Game History Button -->
+        <Button
+            android:id="@+id/gameHistoryButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Game History"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#FF9800" />
+    </LinearLayout>
 </RelativeLayout>

@@ -1,0 +1,48 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F9F9F9"
+    android:padding="16dp">
+
+    <!-- Title -->
+    <TextView
+        android:id="@+id/leaderboardTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Leaderboard"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="#6200EE"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <!-- Difficulty Spinner -->
+    <Spinner
+        android:id="@+id/difficultySpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/leaderboardTitle"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp" />
+
+    <!-- Load Leaderboard Button -->
+    <Button
+        android:id="@+id/loadLeaderboardButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/difficultySpinner"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp"
+        android:text="Load Leaderboard"
+        android:backgroundTint="#6200EE"
+        android:textColor="#FFFFFF" />
+
+    <!-- ListView for Leaderboard -->
+    <ListView
+        android:id="@+id/leaderboardList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/loadLeaderboardButton"
+        android:layout_marginTop="8dp" />
+</RelativeLayout>

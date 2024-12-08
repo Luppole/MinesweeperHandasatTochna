@@ -31,4 +31,12 @@
         android:backgroundTint="@color/secondary"
         android:textColor="@android:color/white" />
 
+    <Button
+        android:id="@+id/profileButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="profileButton"
+        android:backgroundTint="@color/secondary"
+        android:textColor="@android:color/white" />
+
 </LinearLayout>

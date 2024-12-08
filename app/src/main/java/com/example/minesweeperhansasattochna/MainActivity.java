@@ -30,6 +30,13 @@ public class MainActivity extends AppCompatActivity {
             finish(); // Close the current activity
         });
 
+        Button profileButton = findViewById(R.id.profileButton);
+        profileButton.setOnClickListener(v -> {
+            Intent profileIntent = new Intent(MainActivity.this, ProfileActivity.class);
+            startActivity(profileIntent);
+        });
+
+
         // Play Game Button Logic to show the popup
         Button playGameButton = findViewById(R.id.playGameButton);
         playGameButton.setOnClickListener(this::onButtonShowPopupWindowClick);

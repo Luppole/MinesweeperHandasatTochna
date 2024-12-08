@@ -1,18 +1,21 @@
 package com.example.minesweeperhansasattochna;
 
+import android.animation.ObjectAnimator;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.DisplayMetrics;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.os.Handler;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.gridlayout.widget.GridLayout;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.auth.FirebaseAuth;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -25,48 +28,84 @@ public class GameActivity extends AppCompatActivity {
     private Cell[][] board;
     private int ROWS, COLS, NUM_MINES;
     private GridLayout gridLayout;
-    private TextView timer;
+    private TextView timer, personalBestView, bombCounterView, pointsView;
     private Button[][] buttons;
     private Handler timerHandler = new Handler();
     private boolean gameRunning = false;
-    private int timeElapsed = 0; // Timer counter
+    private int timeElapsed = 0;
+    private int bombsLeft;
+
+    private DatabaseReference userRef, leaderboardRef;
+    private String difficulty;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
-        // Get difficulty from Intent
-        String difficulty = getIntent().getStringExtra("difficulty");
-        if (difficulty == null) {
-            difficulty = "easy"; // Default difficulty
-        }
-        setDifficulty(difficulty);
-
+        // Initialize views
         gridLayout = findViewById(R.id.gridLayout);
         timer = findViewById(R.id.timer);
-
-        initializeBoard();
-        setupGrid();
-
+        personalBestView = findViewById(R.id.personalBest);
+        bombCounterView = findViewById(R.id.bombCounter);
+        pointsView = findViewById(R.id.points);
+        Button leaderboardButton = findViewById(R.id.leaderboardButton);
+        Button gameHistoryButton = findViewById(R.id.gameHistoryButton);
         Button resetButton = findViewById(R.id.resetButton);
-        resetButton.setOnClickListener(v -> {
-            resetGame();
-            Toast.makeText(GameActivity.this, "Game Reset!", Toast.LENGTH_SHORT).show();
+
+        // Get difficulty level
+        difficulty = getIntent().getStringExtra("difficulty");
+        if (difficulty == null) {
+            difficulty = "easy";
+        }
+
+        // Firebase setup
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        String userEmail = auth.getCurrentUser() != null ? auth.getCurrentUser().getEmail() : "guest";
+        userRef = FirebaseDatabase.getInstance("https://minesweeperhandasattochna-default-rtdb.europe-west1.firebasedatabase.app")
+                .getReference("users")
+                .child(userEmail.replace(".", ","));
+        leaderboardRef = FirebaseDatabase.getInstance("https://minesweeperhandasattochna-default-rtdb.europe-west1.firebasedatabase.app")
+                .getReference("leaderboard");
+
+        // Fetch points and update UI
+        fetchUserPoints();
+
+        // Button listeners
+        leaderboardButton.setOnClickListener(v -> {
+            animateButtonClick(v); // Animate button click
+            Intent leaderboardIntent = new Intent(GameActivity.this, LeaderboardActivity.class);
+            startActivity(leaderboardIntent);
         });
 
+        gameHistoryButton.setOnClickListener(v -> {
+            animateButtonClick(v); // Animate button click
+            Intent historyIntent = new Intent(GameActivity.this, GameHistoryActivity.class);
+            startActivity(historyIntent);
+        });
+
+        resetButton.setOnClickListener(v -> {
+            animateButtonClick(v); // Animate button click
+            resetGame();
+        });
+
+        // Other initializations
+        setDifficulty(difficulty);
+        fetchPersonalBest();
+        initializeBoard();
+        setupGrid();
         startTimer();
     }
 
     private void setDifficulty(String difficulty) {
         switch (difficulty) {
             case "medium":
-                ROWS = 9;
+                ROWS = 5;
                 COLS = 9;
                 NUM_MINES = 15;
                 break;
             case "hard":
-                ROWS = 12;
+                ROWS = 6;
                 COLS = 12;
                 NUM_MINES = 25;
                 break;
@@ -77,6 +116,53 @@ public class GameActivity extends AppCompatActivity {
                 NUM_MINES = 8;
                 break;
         }
+        bombsLeft = NUM_MINES; // Initialize bombs left
+    }
+
+    private void animateButtonClick(View button) {
+        ObjectAnimator animator = ObjectAnimator.ofFloat(button, "scaleX", 1f, 1.1f, 1f);
+        animator.setDuration(150);
+        animator.start();
+
+        ObjectAnimator animatorY = ObjectAnimator.ofFloat(button, "scaleY", 1f, 1.1f, 1f);
+        animatorY.setDuration(150);
+        animatorY.start();
+    }
+
+    private void fetchUserPoints() {
+        userRef.child("points").get()
+                .addOnSuccessListener(snapshot -> {
+                    int currentPoints = snapshot.exists() ? snapshot.getValue(Integer.class) : 0;
+                    pointsView.setText("Points: " + currentPoints);
+                })
+                .addOnFailureListener(e -> {
+                    pointsView.setText("Points: --");
+                    Toast.makeText(this, "Failed to fetch points: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void fetchPersonalBest() {
+        userRef.child("personalBests").child(difficulty).get()
+                .addOnSuccessListener(snapshot -> {
+                    if (snapshot.exists()) {
+                        long bestTime = snapshot.getValue(Long.class);
+                        personalBestView.setText("Best: " + bestTime + "s");
+                    } else {
+                        personalBestView.setText("Best: --");
+                    }
+                })
+                .addOnFailureListener(e -> Toast.makeText(this, "Failed to load personal best.", Toast.LENGTH_SHORT).show());
+    }
+
+    private void updatePersonalBest() {
+        userRef.child("personalBests").child(difficulty).get()
+                .addOnSuccessListener(snapshot -> {
+                    if (!snapshot.exists() || timeElapsed < snapshot.getValue(Long.class)) {
+                        userRef.child("personalBests").child(difficulty).setValue(timeElapsed);
+                        personalBestView.setText("Best: " + timeElapsed + "s");
+                        Toast.makeText(this, "New Personal Best!", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void initializeBoard() {
@@ -144,8 +230,8 @@ public class GameActivity extends AppCompatActivity {
         int screenWidth = displayMetrics.widthPixels;
         int screenHeight = displayMetrics.heightPixels;
 
-        int gridSize = Math.min(screenWidth, screenHeight) - 400; // Adjusted size
-        int tileSize = gridSize / Math.max(ROWS, COLS);
+        int gridSize = Math.min(screenWidth, screenHeight) - 430;
+        int tileSize = gridSize / Math.min(ROWS, COLS);
 
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLS; j++) {
@@ -159,7 +245,13 @@ public class GameActivity extends AppCompatActivity {
 
                 int finalI = i;
                 int finalJ = j;
-                cellButton.setOnClickListener(v -> revealCell(finalI, finalJ));
+                cellButton.setOnClickListener(v -> {
+                    if (board[finalI][finalJ].isRevealed) {
+                        handleRevealedCellClick(finalI, finalJ);
+                    } else {
+                        revealCell(finalI, finalJ);
+                    }
+                });
                 cellButton.setOnLongClickListener(v -> {
                     flagCell(finalI, finalJ);
                     return true;
@@ -167,6 +259,99 @@ public class GameActivity extends AppCompatActivity {
 
                 gridLayout.addView(cellButton);
                 buttons[i][j] = cellButton;
+            }
+        }
+        bombCounterView.setText("Bombs Left: " + bombsLeft);
+    }
+
+    private void handleRevealedCellClick(int row, int col) {
+        int flaggedCount = countFlaggedAdjacentCells(row, col);
+
+        if (flaggedCount == board[row][col].adjacentMines) {
+            revealAllAdjacentTiles(row, col);
+        }
+    }
+
+    private int countFlaggedAdjacentCells(int row, int col) {
+        int count = 0;
+        int[] directions = {-1, 0, 1};
+
+        for (int dr : directions) {
+            for (int dc : directions) {
+                int newRow = row + dr;
+                int newCol = col + dc;
+
+                if (newRow >= 0 && newRow < ROWS && newCol >= 0 && newCol < COLS) {
+                    if (board[newRow][newCol].isFlagged) {
+                        count++;
+                    }
+                }
+            }
+        }
+        return count;
+    }
+
+    private void revealAllAdjacentTiles(int row, int col) {
+        int[] directions = {-1, 0, 1};
+
+        for (int dr : directions) {
+            for (int dc : directions) {
+                int newRow = row + dr;
+                int newCol = col + dc;
+
+                if (newRow >= 0 && newRow < ROWS && newCol >= 0 && newCol < COLS) {
+                    if (!board[newRow][newCol].isRevealed && !board[newRow][newCol].isFlagged) {
+                        revealCell(newRow, newCol);
+                    }
+                }
+            }
+        }
+    }
+
+    private void revealCell(int row, int col) {
+        if (!gameRunning || board[row][col].isRevealed || board[row][col].isFlagged) return;
+
+        board[row][col].isRevealed = true;
+        buttons[row][col].setEnabled(false);
+
+        if (board[row][col].isMine) {
+            gameRunning = false;
+            Toast.makeText(this, "Game Over!", Toast.LENGTH_SHORT).show();
+            revealAllMines();
+            stopTimer();
+            recordGameResult(false);
+            return;
+        }
+
+        if (board[row][col].adjacentMines == 0) {
+            buttons[row][col].setText("");
+            revealAdjacentCells(row, col);
+        } else {
+            buttons[row][col].setText(String.valueOf(board[row][col].adjacentMines));
+        }
+
+        if (checkWinCondition()) {
+            gameRunning = false;
+            Toast.makeText(this, "You Win!", Toast.LENGTH_SHORT).show();
+            stopTimer();
+            recordGameResult(true);
+            updatePersonalBest();
+        }
+    }
+
+    private void revealAdjacentCells(int row, int col) {
+        int[] directions = {-1, 0, 1};
+
+        for (int dr : directions) {
+            for (int dc : directions) {
+                int newRow = row + dr;
+                int newCol = col + dc;
+
+                if (newRow >= 0 && newRow < ROWS && newCol >= 0 && newCol < COLS) {
+                    if (!board[newRow][newCol].isRevealed && !board[newRow][newCol].isMine) {
+                        revealCell(newRow, newCol);
+                    }
+                }
             }
         }
     }
@@ -180,50 +365,6 @@ public class GameActivity extends AppCompatActivity {
             }
         }
         return true;
-    }
-
-    private void revealCell(int row, int col) {
-        if (!gameRunning || board[row][col].isRevealed || board[row][col].isFlagged) return;
-
-        board[row][col].isRevealed = true;
-
-        if (board[row][col].isMine) {
-            gameRunning = false;
-            Toast.makeText(this, "Game Over!", Toast.LENGTH_SHORT).show();
-            revealAllMines();
-            stopTimer();
-            recordGameResult(false);
-            return;
-        }
-
-        buttons[row][col].setText(String.valueOf(board[row][col].adjacentMines));
-        buttons[row][col].setEnabled(false);
-
-        if (board[row][col].adjacentMines == 0) {
-            for (int dr = -1; dr <= 1; dr++) {
-                for (int dc = -1; dc <= 1; dc++) {
-                    int newRow = row + dr;
-                    int newCol = col + dc;
-                    if (newRow >= 0 && newRow < ROWS && newCol >= 0 && newCol < COLS) {
-                        revealCell(newRow, newCol);
-                    }
-                }
-            }
-        }
-
-        if (checkWinCondition()) {
-            gameRunning = false;
-            Toast.makeText(this, "You Win!", Toast.LENGTH_SHORT).show();
-            stopTimer();
-            recordGameResult(true);
-        }
-    }
-
-    private void flagCell(int row, int col) {
-        if (!gameRunning || board[row][col].isRevealed) return;
-
-        board[row][col].isFlagged = !board[row][col].isFlagged;
-        buttons[row][col].setText(board[row][col].isFlagged ? "F" : "");
     }
 
     private void revealAllMines() {
@@ -257,25 +398,88 @@ public class GameActivity extends AppCompatActivity {
         timeElapsed = 0;
         initializeBoard();
         setupGrid();
+        fetchPersonalBest();
         startTimer();
+        bombsLeft = NUM_MINES;
     }
 
     private void recordGameResult(boolean won) {
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        String userEmail = auth.getCurrentUser() != null ? auth.getCurrentUser().getEmail() : "guest";
+        String userEmail = FirebaseAuth.getInstance().getCurrentUser() != null
+                ? FirebaseAuth.getInstance().getCurrentUser().getEmail()
+                : "guest";
 
         if (userEmail != null) {
-            DatabaseReference dbRef = FirebaseDatabase.getInstance("https://minesweeperhandasattochna-default-rtdb.europe-west1.firebasedatabase.app").getReference("gameHistory");
+            DatabaseReference dbRef = FirebaseDatabase.getInstance("https://minesweeperhandasattochna-default-rtdb.europe-west1.firebasedatabase.app")
+                    .getReference("gameHistory");
 
             HashMap<String, Object> gameData = new HashMap<>();
             gameData.put("won", won);
             gameData.put("timeTaken", timeElapsed);
-            gameData.put("difficulty", getIntent().getStringExtra("difficulty"));
+            gameData.put("difficulty", difficulty);
             gameData.put("timestamp", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault()).format(new Date()));
 
             dbRef.child(userEmail.replace(".", ",")).push().setValue(gameData)
-                    .addOnSuccessListener(aVoid -> Toast.makeText(GameActivity.this, "Game result saved!", Toast.LENGTH_SHORT).show())
-                    .addOnFailureListener(e -> Toast.makeText(GameActivity.this, "Failed to save game result: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                    .addOnSuccessListener(aVoid -> {
+                        Toast.makeText(GameActivity.this, "Game result saved!", Toast.LENGTH_SHORT).show();
+
+                        if (won) {
+                            updatePoints(userEmail);
+                            updateLeaderboard(userEmail);
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(GameActivity.this, "Failed to save game result: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    });
         }
+    }
+
+    private void updatePoints(String userEmail) {
+        userRef.child("points").get().addOnSuccessListener(snapshot -> {
+            int currentPoints = snapshot.exists() ? snapshot.getValue(Integer.class) : 0;
+            int newPoints = calculatePoints();
+            int updatedPoints = currentPoints + newPoints;
+
+            userRef.child("points").setValue(updatedPoints)
+                    .addOnSuccessListener(aVoid -> pointsView.setText("Points: " + updatedPoints))
+                    .addOnFailureListener(e -> Toast.makeText(this, "Failed to update points: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+        });
+    }
+
+    private int calculatePoints() {
+        int basePoints;
+        switch (difficulty) {
+            case "medium":
+                basePoints = 2000;
+                return Math.max(0, (basePoints - timeElapsed) * 2);
+            case "hard":
+                basePoints = 3000;
+                return Math.max(0, (basePoints - timeElapsed) * 3);
+            case "easy":
+            default:
+                basePoints = 1000;
+                return Math.max(0, (basePoints - timeElapsed));
+        }
+    }
+
+    private void updateLeaderboard(String userEmail) {
+        HashMap<String, Object> leaderboardData = new HashMap<>();
+        leaderboardData.put("email", userEmail);
+        leaderboardData.put("time", timeElapsed);
+
+        leaderboardRef.child(difficulty)
+                .child(userEmail.replace(".", ","))
+                .setValue(leaderboardData)
+                .addOnSuccessListener(aVoid -> Toast.makeText(this, "Leaderboard updated!", Toast.LENGTH_SHORT).show())
+                .addOnFailureListener(e -> Toast.makeText(this, "Failed to update leaderboard: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+    }
+
+    private void flagCell(int row, int col) {
+        if (!gameRunning || board[row][col].isRevealed) return;
+
+        board[row][col].isFlagged = !board[row][col].isFlagged;
+        buttons[row][col].setText(board[row][col].isFlagged ? "F" : "");
+
+        bombsLeft += board[row][col].isFlagged ? -1 : 1; // Update bomb counter
+        bombCounterView.setText("Bombs Left: " + bombsLeft);
     }
 }

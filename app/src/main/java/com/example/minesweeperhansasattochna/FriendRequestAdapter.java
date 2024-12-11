@@ -19,9 +19,9 @@ public class FriendRequestAdapter extends RecyclerView.Adapter<FriendRequestAdap
         void onReject(String requesterEmail);
     }
 
-    private Context context;
-    private ArrayList<String> friendRequests;
-    private FriendRequestActionsListener actionsListener;
+    private final Context context;
+    private final ArrayList<String> friendRequests;
+    private final FriendRequestActionsListener actionsListener;
 
     public FriendRequestAdapter(Context context, ArrayList<String> friendRequests, FriendRequestActionsListener actionsListener) {
         this.context = context;

@@ -31,8 +31,12 @@
             android:id="@+id/points"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Points: 0"
+            android:text="Points: --"
+            android:background="#454D45"
+            android:elevation="10dp"
+            android:fontFamily="@font/pixellari"
             android:layout_margin="12dp"
+            android:padding="2dp"
             android:textColor="#FFFFFF"
             android:textStyle="bold"
             android:textSize="16sp" />
@@ -41,8 +45,9 @@
             android:id="@+id/personalBest"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Best: 0"
+            android:text="Best: --"
             android:layout_margin="12dp"
+            android:fontFamily="@font/pixellari"
             android:textColor="#FFFFFF"
             android:textStyle="bold"
             android:textSize="16sp" />
@@ -51,8 +56,9 @@
             android:id="@+id/timer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Time: 0"
+            android:text="Time: --"
             android:layout_margin="12dp"
+            android:fontFamily="@font/pixellari"
             android:textColor="#FFFFFF"
             android:textStyle="bold"
             android:textSize="16sp" />
@@ -61,8 +67,12 @@
             android:id="@+id/bombCounter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Bombs Left: 0"
+            android:text="Bombs Left: --"
+            android:background="#454D45"
+            android:elevation="10dp"
             android:layout_margin="12dp"
+            android:padding="2dp"
+            android:fontFamily="@font/pixellari"
             android:textColor="#FFFFFF"
             android:textStyle="bold"
             android:textSize="16sp" />
@@ -94,12 +104,14 @@
         android:paddingHorizontal="16dp">
 
         <!-- Reset Button -->
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/resetButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/custom_background"
             android:text="Reset"
-            android:backgroundTint="#32DE8A"
+            android:fontFamily="@font/pixellari"
+            android:textSize="24sp"
             android:textColor="#FFFFFF"
             android:layout_margin="10dp" />
 
@@ -110,24 +122,34 @@
             android:layout_weight="1" />
 
         <!-- Leaderboard Button -->
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/leaderboardButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:text="Leaderboard"
             android:layout_margin="10dp"
-            android:backgroundTint="#32DE8A"
-            android:textColor="#FFFFFF" />
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="8dp"
+            android:background="@drawable/custom_background"
+            android:fontFamily="@font/pixellari"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:text="Leaderboard" />
+
 
         <!-- Game History Button -->
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/gameHistoryButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Game History"
             android:layout_margin="10dp"
-            android:backgroundTint="#32DE8A"
-            android:textColor="#FFFFFF" />
+            android:background="@drawable/custom_background"
+            android:fontFamily="@font/pixellari"
+            android:paddingHorizontal="6dp"
+            android:textAlignment="center"
+            android:elevation="10dp"
+            android:textSize="16sp"
+            android:textColor="#FFFFFF"
+            android:text="Game History" />
+
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

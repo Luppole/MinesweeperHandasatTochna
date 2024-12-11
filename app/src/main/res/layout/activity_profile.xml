@@ -2,6 +2,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#9B9999"
     android:padding="16dp">
 
     <LinearLayout
@@ -13,29 +14,32 @@
             android:id="@+id/homeButton"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_margin="16dp"
+            android:layout_margin="0dp"
             android:src="@drawable/ic_logo"
             android:background="?attr/selectableItemBackgroundBorderless" />
 
 
         <!-- Profile Information -->
         <TextView
+            android:fontFamily="@font/pixellari"
             android:id="@+id/profileTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Profile"
-            android:textSize="24sp"
+            android:textSize="48sp"
             android:textStyle="bold"
             android:gravity="center"
-            android:textColor="#6200EE"
+            android:textColor="#000000"
             android:layout_marginBottom="16dp" />
 
         <TextView
             android:id="@+id/emailTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/pixellari"
             android:text="Email: "
-            android:textSize="18sp"
+            android:textColor="@color/textPrimary"
+            android:textSize="24sp"
             android:layout_marginBottom="8dp" />
 
         <TextView
@@ -43,6 +47,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Nickname: "
+            android:fontFamily="@font/pixellari"
+            android:textColor="@color/textPrimary"
             android:textSize="18sp"
             android:layout_marginBottom="8dp" />
 
@@ -51,44 +57,69 @@
             android:id="@+id/nicknameInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/pixellari"
             android:hint="Enter new nickname"
             android:layout_marginBottom="8dp" />
 
-        <Button
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="15dp" />
+
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/saveNicknameButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Save Nickname"
             android:layout_gravity="center"
-            android:backgroundTint="#4CAF50"
+            android:background="@drawable/custom_background"
+            android:fontFamily="@font/pixellari"
             android:textColor="#FFFFFF"
             android:padding="12dp"
             android:layout_marginBottom="16dp" />
+
+        <ProgressBar
+            android:id="@+id/loadingIndicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone" />
+
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="50dp" />
 
         <!-- Add Friend Section -->
         <TextView
             android:id="@+id/addFriendLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/pixellari"
             android:text="Add a Friend"
-            android:textSize="18sp"
+            android:textSize="20sp"
             android:textStyle="bold"
-            android:textColor="#6200EE"
+            android:textColor="#000000"
             android:layout_marginBottom="8dp" />
 
         <EditText
             android:id="@+id/addFriendInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/pixellari"
             android:hint="Enter friend's email"
             android:inputType="textEmailAddress"
             android:layout_marginBottom="8dp" />
 
-        <Button
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="15dp" />
+
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/sendFriendRequestButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Send Friend Request"
+            android:fontFamily="@font/pixellari"
             android:layout_gravity="center"
             android:backgroundTint="#4CAF50"
             android:textColor="#FFFFFF"

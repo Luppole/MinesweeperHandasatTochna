@@ -12,9 +12,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Create Account"
-        android:textSize="24sp"
-        android:backgroundTint="@android:color/system_accent1_500"
-        android:fontFamily="@fonts/poppins"
+        android:textSize="48sp"
+        android:fontFamily="@font/pixellari"
         android:layout_marginBottom="16dp" />
 
     <EditText
@@ -23,6 +22,7 @@
         android:layout_height="wrap_content"
         android:hint="Email"
         android:inputType="textEmailAddress"
+        android:fontFamily="@font/pixellari"
         android:background="@drawable/custom_edittext"
         android:padding="12dp"
         android:layout_marginBottom="12dp" />
@@ -30,6 +30,7 @@
     <EditText
         android:id="@+id/passwordField"
         android:layout_width="match_parent"
+        android:fontFamily="@font/pixellari"
         android:layout_height="wrap_content"
         android:hint="Password"
         android:inputType="textPassword"
@@ -42,21 +43,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Confirm Password"
+        android:fontFamily="@font/pixellari"
         android:inputType="textPassword"
         android:background="@drawable/custom_edittext"
         android:padding="12dp"
         android:layout_marginBottom="12dp" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/signupButton"
-        android:layout_width="400px"
-        android:layout_margin="50px"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:backgroundTint="@android:color/system_accent1_500"
-        android:text="Sign Up"
-        android:textColor="@android:color/white"
-        android:fontFamily="@fonts/poppins"
-        android:layout_marginBottom="16dp" />
+        android:text="SIGN UP"
+        android:background="@drawable/custom_background"
+        android:fontFamily="@font/pixellari"
+        android:textColor="#FFFFFF"
+        android:layout_margin="20dp"
+        android:textStyle="bold"
+        android:stateListAnimator="@animator/button_animation" />
 
     <TextView
         android:id="@+id/loginRedirect"
@@ -65,7 +68,8 @@
         android:layout_height="wrap_content"
         android:text="Already have an account? Log In"
         android:textColor="@color/textPrimary"
-        android:fontFamily="@fonts/poppins"
+        android:fontFamily="@font/pixellari"
+        android:textSize="16sp"
         android:layout_marginTop="16dp"
         android:clickable="true"
         android:focusable="true" />

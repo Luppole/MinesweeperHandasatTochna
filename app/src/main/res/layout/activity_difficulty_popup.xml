@@ -2,7 +2,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#62def8"
+    android:background="#355149"
     android:padding="16dp">
 
     <TextView
@@ -12,31 +12,42 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="16dp"
         android:text="Select Difficulty"
-        android:textSize="22sp"
+        android:fontFamily="@font/pixellari"
+        android:textSize="30sp"
+        android:textColor="#FFFFFF"
         android:textStyle="bold" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/easyButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/difficultyLabel"
+        android:background="@drawable/difficulty_button_easy"
+        android:textSize="20sp"
+        android:fontFamily="@font/pixellari"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="12dp"
         android:text="Easy" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/mediumButton"
         android:layout_width="wrap_content"
+        android:background="@drawable/difficulty_button_medium"
         android:layout_height="wrap_content"
         android:layout_below="@id/easyButton"
+        android:fontFamily="@font/pixellari"
+        android:textSize="20sp"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="12dp"
         android:text="Medium" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/hardButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/pixellari"
+        android:textSize="20sp"
+        android:background="@drawable/difficulty_button_hard"
         android:layout_below="@id/mediumButton"
         android:layout_centerHorizontal="true"
         android:text="Hard" />

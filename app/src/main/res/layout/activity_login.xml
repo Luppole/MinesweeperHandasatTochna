@@ -14,10 +14,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:fontFamily="@fonts/poppins"
+        android:fontFamily="@font/pixellari"
         android:text="Welcome Back!"
-        android:backgroundTint="@android:color/system_accent1_500"
-        android:textSize="24sp" />
+        android:textSize="48sp" />
 
 
 
@@ -27,6 +26,7 @@
         android:layout_height="wrap_content"
         android:hint="Email"
         android:inputType="textEmailAddress"
+        android:fontFamily="@font/pixellari"
         android:background="@drawable/custom_edittext"
         android:padding="12dp"
         android:layout_marginBottom="12dp" />
@@ -38,28 +38,30 @@
         android:hint="Password"
         android:inputType="textPassword"
         android:background="@drawable/custom_edittext"
+        android:fontFamily="@font/pixellari"
         android:padding="12dp"
         android:layout_marginBottom="12dp" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/loginButton"
-        android:layout_width="400px"
-        android:layout_margin="50px"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:backgroundTint="@android:color/system_accent1_500"
         android:text="Log In"
-        android:textColor="@android:color/white"
-        android:fontFamily="@fonts/poppins"
-        android:layout_marginBottom="16dp" />
-
+        android:background="@drawable/custom_background"
+        android:fontFamily="@font/pixellari"
+        android:textColor="#FFFFFF"
+        android:layout_margin="20dp"
+        android:textStyle="bold"
+        android:stateListAnimator="@animator/button_animation" />
     <TextView
         android:id="@+id/signupRedirect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Don't have an account? Sign Up"
         android:textColor="@color/textPrimary"
-        android:fontFamily="@fonts/poppins"
+        android:fontFamily="@font/pixellari"
         android:layout_marginTop="16dp"
+        android:textSize="15sp"
         android:clickable="true"
         android:focusable="true" />
 

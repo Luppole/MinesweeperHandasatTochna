@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#35524A"
-    android:orientation="horizontal">
+    android:background="#35524A">
 
     <!-- Home Button -->
     <ImageButton
@@ -24,6 +23,7 @@
         android:layout_height="wrap_content"
         android:text="Welcome to Minesweeper!"
         android:textSize="24sp"
+        android:fontFamily="@font/pixellari"
         android:textStyle="bold"
         android:textColor="#FFFFFF"
         app:layout_constraintTop_toTopOf="parent"
@@ -34,6 +34,7 @@
 
     <!-- Button Panel -->
     <LinearLayout
+        android:id="@+id/buttonPanel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -41,35 +42,48 @@
         app:layout_constraintTop_toBottomOf="@id/welcomeMessage"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="100dp">
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/playGameButton"
-            android:layout_width="wrap_content"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:text="PLAY GAME"
-            android:backgroundTint="#32DE8A"
+            android:background="@drawable/custom_background"
+            android:fontFamily="@font/pixellari"
             android:textColor="#FFFFFF"
-            android:layout_marginBottom="16dp"
-            android:textStyle="bold" />
+            android:layout_marginBottom="32dp"
+            android:textStyle="bold"
+            android:stateListAnimator="@animator/button_animation" />
 
-        <Button
+
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/profileButton"
-            android:layout_width="wrap_content"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:text="PROFILE"
-            android:backgroundTint="#4CAF50"
+            android:background="@drawable/custom_background"
+            android:fontFamily="@font/pixellari"
             android:textColor="#FFFFFF"
-            android:layout_marginBottom="16dp"
-            android:textStyle="bold" />
-
-        <Button
-            android:id="@+id/signOutButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="SIGN OUT"
-            android:backgroundTint="#F44336"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold" />
+            android:layout_marginBottom="32dp"
+            android:textStyle="bold"
+            android:stateListAnimator="@animator/button_animation" />
     </LinearLayout>
+
+    <!-- Sign Out Button -->
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/signOutButton"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:text="SIGN OUT"
+        android:background="@drawable/difficulty_button_hard"
+        android:fontFamily="@font/pixellari"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:stateListAnimator="@animator/button_animation"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_margin="16dp" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

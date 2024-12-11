@@ -2,8 +2,10 @@ package com.example.minesweeperhansasattochna;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,6 +22,7 @@ public class ProfileActivity extends AppCompatActivity {
     private TextView emailTextView, nicknameTextView;
     private EditText addFriendInput, nicknameInput;
     private Button saveNicknameButton, sendFriendRequestButton;
+    private ProgressBar loadingIndicator;
 
     private DatabaseReference userRef;
 
@@ -35,12 +38,18 @@ public class ProfileActivity extends AppCompatActivity {
         saveNicknameButton = findViewById(R.id.saveNicknameButton);
         addFriendInput = findViewById(R.id.addFriendInput);
         sendFriendRequestButton = findViewById(R.id.sendFriendRequestButton);
+        loadingIndicator = findViewById(R.id.loadingIndicator); // Add a ProgressBar in XML
 
-        String userEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        String userEmail = FirebaseAuth.getInstance().getCurrentUser() != null ?
+                FirebaseAuth.getInstance().getCurrentUser().getEmail() : null;
+
         if (userEmail != null) {
             emailTextView.setText(userEmail);
             userRef = FirebaseDatabase.getInstance("https://minesweeperhandasattochna-default-rtdb.europe-west1.firebasedatabase.app")
                     .getReference("users").child(userEmail.replace(".", ","));
+        } else {
+            Toast.makeText(this, "User is not logged in.", Toast.LENGTH_SHORT).show();
+            finish(); // Exit activity if the user is not authenticated
         }
 
         saveNicknameButton.setOnClickListener(v -> saveNickname());
@@ -52,7 +61,6 @@ public class ProfileActivity extends AppCompatActivity {
                 sendFriendRequest(recipientEmail);
             }
         });
-
     }
 
     private void saveNickname() {
@@ -61,22 +69,27 @@ public class ProfileActivity extends AppCompatActivity {
             Toast.makeText(this, "Nickname cannot be empty.", Toast.LENGTH_SHORT).show();
             return;
         }
+
+        loadingIndicator.setVisibility(View.VISIBLE); // Show loading indicator
         userRef.child("nickname").setValue(newNickname)
                 .addOnSuccessListener(aVoid -> {
-                    nicknameTextView.setText(newNickname);
-                    Toast.makeText(this, "Nickname updated!", Toast.LENGTH_SHORT).show();
+                    loadingIndicator.setVisibility(View.GONE); // Hide loading indicator
+                    nicknameTextView.setText(newNickname); // Update the UI
+                    Toast.makeText(this, "Nickname updated successfully!", Toast.LENGTH_SHORT).show();
                 })
-                .addOnFailureListener(e -> Toast.makeText(this, "Failed to update nickname.", Toast.LENGTH_SHORT).show());
+                .addOnFailureListener(e -> {
+                    loadingIndicator.setVisibility(View.GONE); // Hide loading indicator
+                    Toast.makeText(this, "Failed to update nickname: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
     }
 
     private void sendFriendRequest(String recipientEmail) {
+        loadingIndicator.setVisibility(View.VISIBLE); // Show loading indicator
         DatabaseReference usersRef = FirebaseDatabase.getInstance("https://minesweeperhandasattochna-default-rtdb.europe-west1.firebasedatabase.app")
                 .getReference("users");
 
-        // Check if the recipient exists in the database
         usersRef.child(recipientEmail.replace(".", ",")).get().addOnSuccessListener(snapshot -> {
             if (snapshot.exists()) {
-                // If the recipient exists, proceed to send the friend request
                 DatabaseReference recipientRef = usersRef.child(recipientEmail.replace(".", ",")).child("friendRequests");
 
                 String requestId = recipientRef.push().getKey();
@@ -86,19 +99,21 @@ public class ProfileActivity extends AppCompatActivity {
                     request.put("status", "pending");
 
                     recipientRef.child(requestId).setValue(request).addOnSuccessListener(aVoid -> {
+                        loadingIndicator.setVisibility(View.GONE); // Hide loading indicator
                         Toast.makeText(this, "Friend request sent!", Toast.LENGTH_SHORT).show();
                         addFriendInput.setText(""); // Clear the input field
                     }).addOnFailureListener(e -> {
+                        loadingIndicator.setVisibility(View.GONE); // Hide loading indicator
                         Toast.makeText(this, "Failed to send friend request: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     });
                 }
             } else {
-                // If the recipient does not exist, show an error message
+                loadingIndicator.setVisibility(View.GONE); // Hide loading indicator
                 Toast.makeText(this, "The email does not exist in the database.", Toast.LENGTH_SHORT).show();
             }
         }).addOnFailureListener(e -> {
+            loadingIndicator.setVisibility(View.GONE); // Hide loading indicator
             Toast.makeText(this, "Error checking email: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         });
     }
-
 }

@@ -10,7 +10,7 @@
         android:id="@+id/homeButton"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_margin="16dp"
+        android:layout_margin="3dp"
         android:src="@drawable/ic_logo"
         android:background="?attr/selectableItemBackgroundBorderless"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,7 +22,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="LEADERBOARD"
-        android:textSize="24sp"
+        android:fontFamily="@font/pixellari"
+        android:textSize="32sp"
         android:textStyle="bold"
         android:textColor="#FFFFFF"
         app:layout_constraintTop_toTopOf="parent"
@@ -47,14 +48,15 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Load Leaderboard Button -->
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/loadLeaderboardButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="LOAD LEADERBOARD"
+        android:fontFamily="@font/pixellari"
         android:textColor="#FFFFFF"
         android:textStyle="bold"
-        android:backgroundTint="#32DE8A"
+        android:backgroundTint="#4CAF50"
         android:elevation="4dp"
         android:paddingHorizontal="24dp"
         android:paddingVertical="8dp"

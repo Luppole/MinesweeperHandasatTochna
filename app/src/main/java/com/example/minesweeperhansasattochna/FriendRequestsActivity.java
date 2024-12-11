@@ -32,58 +32,89 @@ public class FriendRequestsActivity extends AppCompatActivity {
         FirebaseAuth auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() != null) {
             String userEmail = auth.getCurrentUser().getEmail();
-            userRef = FirebaseDatabase.getInstance()
-                    .getReference("users").child(userEmail.replace(".", ",")).child("friendRequests");
+            if (userEmail != null) {
+                userRef = FirebaseDatabase.getInstance("https://minesweeperhandasattochna-default-rtdb.europe-west1.firebasedatabase.app")
+                        .getReference("users").child(userEmail.replace(".", ",")).child("friendRequests");
 
-            loadFriendRequests();
+                loadFriendRequests();
+            }
         } else {
             Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show();
+            finish();
         }
     }
 
     private void loadFriendRequests() {
         userRef.get().addOnSuccessListener(snapshot -> {
             friendRequests.clear();
-            for (DataSnapshot request : snapshot.getChildren()) {
-                String status = request.child("status").getValue(String.class);
-                if ("pending".equals(status)) {
-                    String requester = request.child("from").getValue(String.class);
-                    if (requester != null) {
+            if (snapshot.exists()) {
+                for (DataSnapshot requestSnapshot : snapshot.getChildren()) {
+                    String requester = requestSnapshot.child("from").getValue(String.class);
+                    String status = requestSnapshot.child("status").getValue(String.class);
+
+                    if ("pending".equals(status) && requester != null) {
                         friendRequests.add(requester);
                     }
                 }
+
+                adapter = new FriendRequestAdapter(this, friendRequests, new FriendRequestAdapter.FriendRequestActionsListener() {
+                    @Override
+                    public void onAccept(String requesterEmail) {
+                        acceptFriendRequest(requesterEmail);
+                    }
+
+                    @Override
+                    public void onReject(String requesterEmail) {
+                        rejectFriendRequest(requesterEmail);
+                    }
+                });
+                friendRequestsRecyclerView.setAdapter(adapter);
+            } else {
+                Toast.makeText(this, "No friend requests found.", Toast.LENGTH_SHORT).show();
             }
-
-            adapter = new FriendRequestAdapter(this, friendRequests, new FriendRequestAdapter.FriendRequestActionsListener() {
-                @Override
-                public void onAccept(String requesterEmail) {
-                    acceptFriendRequest(requesterEmail);
-                }
-
-                @Override
-                public void onReject(String requesterEmail) {
-                    rejectFriendRequest(requesterEmail);
-                }
-            });
-            friendRequestsRecyclerView.setAdapter(adapter);
-        }).addOnFailureListener(e ->
-                Toast.makeText(this, "Failed to load friend requests.", Toast.LENGTH_SHORT).show());
+        }).addOnFailureListener(e -> Toast.makeText(this, "Failed to load friend requests.", Toast.LENGTH_SHORT).show());
     }
 
     private void acceptFriendRequest(String requesterEmail) {
-        // Update both users' friend lists and remove the request
-        userRef.child(requesterEmail.replace(".", ",")).removeValue().addOnSuccessListener(aVoid -> {
-            Toast.makeText(this, "Accepted friend request from: " + requesterEmail, Toast.LENGTH_SHORT).show();
-        }).addOnFailureListener(e -> {
-            Toast.makeText(this, "Failed to accept friend request: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        });
+        String currentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        if (currentUserEmail == null) {
+            Toast.makeText(this, "User not logged in.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        DatabaseReference currentUserFriendsRef = FirebaseDatabase.getInstance("https://minesweeperhandasattochna-default-rtdb.europe-west1.firebasedatabase.app")
+                .getReference("users").child(currentUserEmail.replace(".", ",")).child("friends");
+
+        DatabaseReference requesterFriendsRef = FirebaseDatabase.getInstance("https://minesweeperhandasattochna-default-rtdb.europe-west1.firebasedatabase.app")
+                .getReference("users").child(requesterEmail.replace(".", ",")).child("friends");
+
+        // Add each other as friends
+        currentUserFriendsRef.child(requesterEmail.replace(".", ",")).setValue(true)
+                .addOnSuccessListener(aVoid -> {
+                    requesterFriendsRef.child(currentUserEmail.replace(".", ",")).setValue(true)
+                            .addOnSuccessListener(aVoid1 -> {
+                                // Remove the friend request after accepting
+                                userRef.child(requesterEmail.replace(".", ",")).removeValue()
+                                        .addOnSuccessListener(aVoid2 -> {
+                                            friendRequests.remove(requesterEmail);
+                                            adapter.notifyDataSetChanged();
+                                            Toast.makeText(this, "Friend request accepted and deleted!", Toast.LENGTH_SHORT).show();
+                                        })
+                                        .addOnFailureListener(e -> Toast.makeText(this, "Failed to remove friend request: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                            })
+                            .addOnFailureListener(e -> Toast.makeText(this, "Failed to add to requester's friends list: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                })
+                .addOnFailureListener(e -> Toast.makeText(this, "Failed to add to friends list: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
     private void rejectFriendRequest(String requesterEmail) {
-        userRef.child(requesterEmail.replace(".", ",")).removeValue().addOnSuccessListener(aVoid -> {
-            Toast.makeText(this, "Rejected friend request from: " + requesterEmail, Toast.LENGTH_SHORT).show();
-        }).addOnFailureListener(e -> {
-            Toast.makeText(this, "Failed to reject friend request: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        });
+        // Remove the friend request after rejecting
+        userRef.child(requesterEmail.replace(".", ",")).removeValue()
+                .addOnSuccessListener(aVoid -> {
+                    friendRequests.remove(requesterEmail);
+                    adapter.notifyDataSetChanged();
+                    Toast.makeText(this, "Friend request rejected and deleted!", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> Toast.makeText(this, "Failed to reject friend request: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 }

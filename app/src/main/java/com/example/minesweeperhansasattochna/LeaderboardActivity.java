@@ -24,7 +24,7 @@ public class LeaderboardActivity extends AppCompatActivity {
 
     private Spinner difficultySpinner;
     private ListView leaderboardList;
-    private DatabaseReference leaderboardRef;
+    private DatabaseReference leaderboardRef, usersRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,11 +34,13 @@ public class LeaderboardActivity extends AppCompatActivity {
         // Initialize UI components
         difficultySpinner = findViewById(R.id.difficultySpinner);
         leaderboardList = findViewById(R.id.leaderboardList);
-        ImageButton homeButton = findViewById(R.id.homeButton); // Correctly initialized after setContentView
+        ImageButton backButton = findViewById(R.id.backButton);
 
-        // Initialize Firebase Database reference
+        // Initialize Firebase Database references
         leaderboardRef = FirebaseDatabase.getInstance("https://minesweeperhandasattochna-default-rtdb.europe-west1.firebasedatabase.app")
                 .getReference("leaderboard");
+        usersRef = FirebaseDatabase.getInstance("https://minesweeperhandasattochna-default-rtdb.europe-west1.firebasedatabase.app")
+                .getReference("users");
 
         // Set up the difficulty spinner
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, new String[]{"easy", "medium", "hard"});
@@ -48,12 +50,8 @@ public class LeaderboardActivity extends AppCompatActivity {
         // Set load leaderboard button listener
         findViewById(R.id.loadLeaderboardButton).setOnClickListener(v -> loadLeaderboard());
 
-        // Set home button click listener to navigate back to main activity
-        homeButton.setOnClickListener(v -> {
-            Intent intent = new Intent(LeaderboardActivity.this, MainActivity.class);
-            startActivity(intent);
-            finish(); // Optional to avoid stacking activities
-        });
+        // Set back button listener
+        backButton.setOnClickListener(v -> onBackPressed());
     }
 
     private void loadLeaderboard() {
@@ -77,10 +75,8 @@ public class LeaderboardActivity extends AppCompatActivity {
                             }
                         }
 
-                        // Sort leaderboard by time (ascending)
-                        Collections.sort(leaderboardData, Comparator.comparingInt(LeaderboardEntry::getTime));
-                        LeaderboardAdapter adapter = new LeaderboardAdapter(this, leaderboardData);
-                        leaderboardList.setAdapter(adapter);
+                        // Fetch nicknames and update leaderboard
+                        fetchNicknamesAndUpdate(leaderboardData);
                     } else {
                         Toast.makeText(this, "No leaderboard data found.", Toast.LENGTH_SHORT).show();
                     }
@@ -88,17 +84,42 @@ public class LeaderboardActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> Toast.makeText(this, "Failed to load leaderboard: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
+    private void fetchNicknamesAndUpdate(List<LeaderboardEntry> leaderboardData) {
+        List<LeaderboardEntry> updatedData = new ArrayList<>();
+
+        for (LeaderboardEntry entry : leaderboardData) {
+            String email = entry.getDisplayName(); // Initially, displayName stores the email.
+            String sanitizedEmail = email.replace(".", ",");
+
+            usersRef.child(sanitizedEmail).get().addOnSuccessListener(snapshot -> {
+                String nickname = snapshot.child("nickname").getValue(String.class);
+                String displayName = (nickname != null && !nickname.isEmpty()) ? nickname : email;
+
+                updatedData.add(new LeaderboardEntry(displayName, entry.getTime()));
+
+                // Check if all entries are updated and refresh the UI
+                if (updatedData.size() == leaderboardData.size()) {
+                    Collections.sort(updatedData, Comparator.comparingInt(LeaderboardEntry::getTime));
+                    LeaderboardAdapter adapter = new LeaderboardAdapter(this, updatedData);
+                    leaderboardList.setAdapter(adapter);
+                }
+            }).addOnFailureListener(e -> {
+                Toast.makeText(this, "Failed to load nickname for " + email, Toast.LENGTH_SHORT).show();
+            });
+        }
+    }
+
     public static class LeaderboardEntry {
-        private final String email;
+        private final String displayName;
         private final int time;
 
-        public LeaderboardEntry(String email, int time) {
-            this.email = email;
+        public LeaderboardEntry(String displayName, int time) {
+            this.displayName = displayName;
             this.time = time;
         }
 
-        public String getEmail() {
-            return email;
+        public String getDisplayName() {
+            return displayName;
         }
 
         public int getTime() {

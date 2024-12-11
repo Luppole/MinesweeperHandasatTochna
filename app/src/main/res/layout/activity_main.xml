@@ -53,9 +53,24 @@
             android:background="@drawable/custom_background"
             android:fontFamily="@font/pixellari"
             android:textColor="#FFFFFF"
+            android:layout_margin="32dp"
+            android:textStyle="bold"
+            android:stateListAnimator="@animator/button_animation" />
+
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/storeButton"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:text="GO TO STORE"
+            android:background="@drawable/custom_background"
+            android:fontFamily="@font/pixellari"
+            android:textColor="#FFFFFF"
             android:layout_marginBottom="32dp"
             android:textStyle="bold"
             android:stateListAnimator="@animator/button_animation" />
+
 
 
         <androidx.appcompat.widget.AppCompatButton

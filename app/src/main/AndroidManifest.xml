@@ -30,5 +30,6 @@
         <activity android:name=".ProfileActivity" />
         <activity android:name=".LeaderboardActivity" />
         <activity android:name=".GameHistoryActivity" />
+        <activity android:name=".StoreActivity" />
     </application>
 </manifest>

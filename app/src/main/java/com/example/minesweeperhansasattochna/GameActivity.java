@@ -2,6 +2,7 @@ package com.example.minesweeperhansasattochna;
 
 import android.animation.ObjectAnimator;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
@@ -9,6 +10,8 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.gridlayout.widget.GridLayout;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -31,7 +35,9 @@ public class GameActivity extends AppCompatActivity {
     private int ROWS, COLS, NUM_MINES;
     private GridLayout gridLayout;
     private TextView timer, personalBestView, bombCounterView, pointsView;
+    private LinearLayout itemsBoard; // Items Board for displaying available items
     private Button[][] buttons;
+    private ImageButton homeButton;
     private Handler timerHandler = new Handler();
     private boolean gameRunning = false;
     private int timeElapsed = 0;
@@ -51,6 +57,8 @@ public class GameActivity extends AppCompatActivity {
         personalBestView = findViewById(R.id.personalBest);
         bombCounterView = findViewById(R.id.bombCounter);
         pointsView = findViewById(R.id.points);
+        // itemsBoard = findViewById(R.id.itemsBoard); // Initialize items board
+        homeButton = findViewById(R.id.homeButton);
         Button leaderboardButton = findViewById(R.id.leaderboardButton);
         Button gameHistoryButton = findViewById(R.id.gameHistoryButton);
         Button resetButton = findViewById(R.id.resetButton);
@@ -60,6 +68,12 @@ public class GameActivity extends AppCompatActivity {
         if (difficulty == null) {
             difficulty = "easy";
         }
+
+        // Set up home button
+        homeButton.setOnClickListener(v -> {
+            Intent homeIntent = new Intent(GameActivity.this, MainActivity.class);
+            startActivity(homeIntent);
+        });
 
         // Firebase setup
         FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -98,7 +112,7 @@ public class GameActivity extends AppCompatActivity {
         setupGrid();
         startTimer();
         animateGrid();
-
+        loadPlayerItems(); // Load available items into the Items Board
     }
 
     private void setDifficulty(String difficulty) {
@@ -121,6 +135,55 @@ public class GameActivity extends AppCompatActivity {
                 break;
         }
         bombsLeft = NUM_MINES; // Initialize bombs left
+    }
+
+    private void loadPlayerItems() {
+        userRef.child("items").get().addOnSuccessListener(snapshot -> {
+            if (snapshot.exists()) {
+                itemsBoard.removeAllViews(); // Clear existing buttons
+                for (DataSnapshot itemSnapshot : snapshot.getChildren()) {
+                    String itemName = itemSnapshot.getKey();
+                    int itemCount = itemSnapshot.getValue(Integer.class);
+
+                    if (itemCount > 0) {
+                        addItemButton(itemName, itemCount);
+                    }
+                }
+            }
+        }).addOnFailureListener(e -> {
+            Toast.makeText(this, "Failed to load items.", Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    private void addItemButton(String itemName, int itemCount) {
+        Button itemButton = new Button(this);
+        itemButton.setText(itemName + " (" + itemCount + ")");
+        itemButton.setOnClickListener(v -> useItem(itemName));
+        itemButton.setBackgroundResource(R.drawable.item_button);
+        itemsBoard.addView(itemButton);
+    }
+
+    private void useItem(String itemName) {
+        switch (itemName) {
+            case "hint":
+                useHintItem();
+                break;
+            default:
+                Toast.makeText(this, "Unknown item: " + itemName, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void useHintItem() {
+        boolean hintUsed = HintItem.useHint(board, buttons); // Hint logic encapsulated in HintItem
+        if (hintUsed) {
+            userRef.child("items").child("hint").get().addOnSuccessListener(snapshot -> {
+                int currentCount = snapshot.exists() ? snapshot.getValue(Integer.class) : 0;
+                userRef.child("items").child("hint").setValue(currentCount - 1)
+                        .addOnSuccessListener(aVoid -> loadPlayerItems());
+            });
+        } else {
+            Toast.makeText(this, "No valid hint location available.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void animateButtonClick(View button) {
@@ -252,7 +315,11 @@ public class GameActivity extends AppCompatActivity {
                 params.columnSpec = GridLayout.spec(j);
                 params.width = tileSize;
                 params.height = tileSize;
+
                 cellButton.setLayoutParams(params);
+
+                // Set the initial texture to a blank tile
+                cellButton.setBackgroundResource(R.drawable.blank_texture);
 
                 int finalI = i;
                 int finalJ = j;
@@ -274,6 +341,7 @@ public class GameActivity extends AppCompatActivity {
         }
         bombCounterView.setText("Bombs Left: " + bombsLeft);
     }
+
 
     private void handleRevealedCellClick(int row, int col) {
         int flaggedCount = countFlaggedAdjacentCells(row, col);
@@ -319,6 +387,29 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
+    private Drawable getNumberTexture(int number) {
+        switch (number) {
+            case 1:
+                return getDrawable(R.drawable.one_texture);
+            case 2:
+                return getDrawable(R.drawable.two_texture);
+            case 3:
+                return getDrawable(R.drawable.three_texture);
+            case 4:
+                return getDrawable(R.drawable.four_texture);
+            case 5:
+                return getDrawable(R.drawable.five_texture);
+            case 6:
+                return getDrawable(R.drawable.six_texture);
+            case 7:
+                return getDrawable(R.drawable.seven_texture);
+            case 8:
+                return getDrawable(R.drawable.eight_texture);
+            default:
+                return getDrawable(R.drawable.empty_texture);
+        }
+    }
+
     private void revealCell(int row, int col) {
         if (!gameRunning || board[row][col].isRevealed || board[row][col].isFlagged) return;
 
@@ -335,10 +426,10 @@ public class GameActivity extends AppCompatActivity {
         }
 
         if (board[row][col].adjacentMines == 0) {
-            buttons[row][col].setText("");
+            buttons[row][col].setBackground(getDrawable(R.drawable.blank_texture));
             revealAdjacentCells(row, col);
         } else {
-            buttons[row][col].setText(String.valueOf(board[row][col].adjacentMines));
+            buttons[row][col].setBackground(getNumberTexture(board[row][col].adjacentMines));
         }
 
         if (checkWinCondition()) {
@@ -349,6 +440,8 @@ public class GameActivity extends AppCompatActivity {
             updatePersonalBest();
         }
     }
+
+
 
     private void revealAdjacentCells(int row, int col) {
         int[] directions = {-1, 0, 1};
@@ -382,7 +475,7 @@ public class GameActivity extends AppCompatActivity {
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLS; j++) {
                 if (board[i][j].isMine) {
-                    buttons[i][j].setText("M");
+                    buttons[i][j].setBackground(getDrawable(R.drawable.bomb_texture));
                 }
             }
         }
@@ -488,9 +581,19 @@ public class GameActivity extends AppCompatActivity {
         if (!gameRunning || board[row][col].isRevealed) return;
 
         board[row][col].isFlagged = !board[row][col].isFlagged;
-        buttons[row][col].setText(board[row][col].isFlagged ? "F" : "");
 
-        bombsLeft += board[row][col].isFlagged ? -1 : 1; // Update bomb counter
+        if (board[row][col].isFlagged) {
+            // Set the background to flag texture when flagged
+            buttons[row][col].setBackgroundResource(R.drawable.flag_texture);
+            bombsLeft--;
+        } else {
+            // Reset to default tile background when unflagged
+            buttons[row][col].setBackgroundResource(R.drawable.blank_texture);
+            bombsLeft++;
+        }
+
+        // Update the bomb counter UI
         bombCounterView.setText("Bombs Left: " + bombsLeft);
     }
+
 }

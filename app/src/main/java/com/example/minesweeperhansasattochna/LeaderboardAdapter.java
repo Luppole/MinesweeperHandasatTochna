@@ -42,14 +42,14 @@ public class LeaderboardAdapter extends BaseAdapter {
         }
 
         TextView rankText = convertView.findViewById(R.id.rankText);
-        TextView emailText = convertView.findViewById(R.id.emailText);
+        TextView displayNameText = convertView.findViewById(R.id.displayNameText);
         TextView timeText = convertView.findViewById(R.id.timeText);
 
         LeaderboardActivity.LeaderboardEntry entry = leaderboardEntries.get(position);
 
-        // Set rank and email
+        // Set rank, display name, and time
         rankText.setText(String.valueOf(position + 1));
-        emailText.setText(entry.getEmail().toUpperCase());
+        displayNameText.setText(entry.getDisplayName());
         timeText.setText(entry.getTime() + "s");
 
         // Apply colors for the top 3 ranks
@@ -68,7 +68,7 @@ public class LeaderboardAdapter extends BaseAdapter {
                 break;
         }
 
-        emailText.setTextColor(Color.LTGRAY);
+        displayNameText.setTextColor(Color.LTGRAY);
         timeText.setTextColor(Color.WHITE);
 
         return convertView;

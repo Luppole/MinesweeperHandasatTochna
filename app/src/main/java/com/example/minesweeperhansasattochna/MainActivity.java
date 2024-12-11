@@ -36,27 +36,28 @@ public class MainActivity extends AppCompatActivity {
             startActivity(profileIntent);
         });
 
-
-        // Play Game Button Logic to show the popup
         Button playGameButton = findViewById(R.id.playGameButton);
         playGameButton.setOnClickListener(this::onButtonShowPopupWindowClick);
+
+        // Initialize Store Button outside the popup logic
+        Button storeButton = findViewById(R.id.storeButton);
+        storeButton.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, StoreActivity.class);
+            startActivity(intent);
+        });
     }
 
     public void onButtonShowPopupWindowClick(View view) {
-        // Inflate the layout of the popup window
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         View popupView = inflater.inflate(R.layout.activity_difficulty_popup, null);
 
-        // Create the popup window
         int width = LinearLayout.LayoutParams.WRAP_CONTENT;
         int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-        boolean focusable = true; // Let taps outside the popup dismiss it
+        boolean focusable = true;
         final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
 
-        // Show the popup window at the center of the screen
         popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
 
-        // Find and set click listeners for difficulty buttons
         Button easyButton = popupView.findViewById(R.id.easyButton);
         Button mediumButton = popupView.findViewById(R.id.mediumButton);
         Button hardButton = popupView.findViewById(R.id.hardButton);
@@ -79,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void startGameActivity(String difficulty) {
         Intent intent = new Intent(MainActivity.this, GameActivity.class);
-        intent.putExtra("difficulty", difficulty); // Pass difficulty to GameActivity
+        intent.putExtra("difficulty", difficulty);
         startActivity(intent);
     }
 }

@@ -44,8 +44,13 @@ public class FriendRequestsActivity extends AppCompatActivity {
         userRef.get().addOnSuccessListener(snapshot -> {
             friendRequests.clear();
             for (DataSnapshot request : snapshot.getChildren()) {
-                String requester = request.child("from").getValue(String.class);
-                friendRequests.add(requester);
+                String status = request.child("status").getValue(String.class);
+                if ("pending".equals(status)) {
+                    String requester = request.child("from").getValue(String.class);
+                    if (requester != null) {
+                        friendRequests.add(requester);
+                    }
+                }
             }
 
             adapter = new FriendRequestAdapter(this, friendRequests, new FriendRequestAdapter.FriendRequestActionsListener() {
@@ -60,8 +65,10 @@ public class FriendRequestsActivity extends AppCompatActivity {
                 }
             });
             friendRequestsRecyclerView.setAdapter(adapter);
-        }).addOnFailureListener(e -> Toast.makeText(this, "Failed to load friend requests", Toast.LENGTH_SHORT).show());
+        }).addOnFailureListener(e ->
+                Toast.makeText(this, "Failed to load friend requests", Toast.LENGTH_SHORT).show());
     }
+
 
     private void acceptFriendRequest(String requesterEmail) {
         Toast.makeText(this, "Accepted friend request from: " + requesterEmail, Toast.LENGTH_SHORT).show();

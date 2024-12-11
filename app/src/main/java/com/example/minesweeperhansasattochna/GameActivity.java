@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -95,6 +97,8 @@ public class GameActivity extends AppCompatActivity {
         initializeBoard();
         setupGrid();
         startTimer();
+        animateGrid();
+
     }
 
     private void setDifficulty(String difficulty) {
@@ -220,6 +224,13 @@ public class GameActivity extends AppCompatActivity {
         }
         return count;
     }
+
+    private void animateGrid() {
+        Animation fadeIn = AnimationUtils.loadAnimation(this, android.R.anim.fade_in);
+        fadeIn.setDuration(1000); // Animation duration in milliseconds
+        gridLayout.startAnimation(fadeIn);
+    }
+
 
     private void setupGrid() {
         gridLayout.removeAllViews();

@@ -44,7 +44,15 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         saveNicknameButton.setOnClickListener(v -> saveNickname());
-        sendFriendRequestButton.setOnClickListener(v -> sendFriendRequest());
+        sendFriendRequestButton.setOnClickListener(v -> {
+            String recipientEmail = addFriendInput.getText().toString().trim();
+            if (TextUtils.isEmpty(recipientEmail)) {
+                Toast.makeText(this, "Please enter a valid email.", Toast.LENGTH_SHORT).show();
+            } else {
+                sendFriendRequest(recipientEmail);
+            }
+        });
+
     }
 
     private void saveNickname() {
@@ -61,24 +69,36 @@ public class ProfileActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> Toast.makeText(this, "Failed to update nickname.", Toast.LENGTH_SHORT).show());
     }
 
-    private void sendFriendRequest() {
-        String friendEmail = addFriendInput.getText().toString().trim();
-        if (TextUtils.isEmpty(friendEmail)) {
-            Toast.makeText(this, "Please enter a valid email.", Toast.LENGTH_SHORT).show();
-            return;
-        }
+    private void sendFriendRequest(String recipientEmail) {
+        DatabaseReference usersRef = FirebaseDatabase.getInstance("https://minesweeperhandasattochna-default-rtdb.europe-west1.firebasedatabase.app")
+                .getReference("users");
 
-        DatabaseReference friendRequestsRef = FirebaseDatabase.getInstance("https://minesweeperhandasattochna-default-rtdb.europe-west1.firebasedatabase.app")
-                .getReference("users").child(friendEmail.replace(".", ",")).child("friendRequests");
+        // Check if the recipient exists in the database
+        usersRef.child(recipientEmail.replace(".", ",")).get().addOnSuccessListener(snapshot -> {
+            if (snapshot.exists()) {
+                // If the recipient exists, proceed to send the friend request
+                DatabaseReference recipientRef = usersRef.child(recipientEmail.replace(".", ",")).child("friendRequests");
 
-        HashMap<String, Object> request = new HashMap<>();
-        request.put("from", FirebaseAuth.getInstance().getCurrentUser().getEmail());
+                String requestId = recipientRef.push().getKey();
+                if (requestId != null) {
+                    HashMap<String, String> request = new HashMap<>();
+                    request.put("from", FirebaseAuth.getInstance().getCurrentUser().getEmail());
+                    request.put("status", "pending");
 
-        friendRequestsRef.push().setValue(request)
-                .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(this, "Friend request sent!", Toast.LENGTH_SHORT).show();
-                    addFriendInput.setText("");
-                })
-                .addOnFailureListener(e -> Toast.makeText(this, "Failed to send friend request.", Toast.LENGTH_SHORT).show());
+                    recipientRef.child(requestId).setValue(request).addOnSuccessListener(aVoid -> {
+                        Toast.makeText(this, "Friend request sent!", Toast.LENGTH_SHORT).show();
+                        addFriendInput.setText(""); // Clear the input field
+                    }).addOnFailureListener(e -> {
+                        Toast.makeText(this, "Failed to send friend request: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    });
+                }
+            } else {
+                // If the recipient does not exist, show an error message
+                Toast.makeText(this, "The email does not exist in the database.", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(e -> {
+            Toast.makeText(this, "Error checking email: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        });
     }
+
 }

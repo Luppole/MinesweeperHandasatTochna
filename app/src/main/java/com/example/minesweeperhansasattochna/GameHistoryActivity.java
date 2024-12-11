@@ -1,7 +1,9 @@
 package com.example.minesweeperhansasattochna;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -25,6 +27,14 @@ public class GameHistoryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_game_history);
 
         historyList = findViewById(R.id.historyList);
+        ImageButton homeButton = findViewById(R.id.homeButton);
+
+        // Set home button click listener to navigate back to main activity
+        homeButton.setOnClickListener(v -> {
+            Intent intent = new Intent(GameHistoryActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish(); // Optional to avoid stacking activities
+        });
 
         String userEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         if (userEmail != null) {
@@ -47,8 +57,9 @@ public class GameHistoryActivity extends AppCompatActivity {
                             long time = entry.child("timeTaken").getValue(Long.class);
                             boolean won = entry.child("won").getValue(Boolean.class);
                             String result = won ? "Win" : "Loss";
-                            historyData.add(difficulty + " - " + result + " - " + time + "s");
+                            historyData.add(difficulty.toUpperCase() + " - " + result + " - " + time + "s");
                         }
+
                         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, historyData);
                         historyList.setAdapter(adapter);
                     } else {

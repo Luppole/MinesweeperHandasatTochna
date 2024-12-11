@@ -1,27 +1,51 @@
-<RelativeLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F9F9F9"
+    android:background="#35524A"
     android:padding="16dp">
+
+    <!-- Home Button -->
+    <ImageButton
+        android:id="@+id/homeButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_logo"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <!-- Title -->
     <TextView
         android:id="@+id/gameHistoryTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Game History"
+        android:text="GAME HISTORY"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:textColor="#6200EE"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:textColor="#FFFFFF"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/homeButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        android:layout_marginTop="16dp" />
 
     <!-- ListView for Game History -->
     <ListView
         android:id="@+id/historyList"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/gameHistoryTitle"
-        android:layout_marginTop="16dp" />
-</RelativeLayout>
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#627C85"
+        android:divider="#32DE8A"
+        android:dividerHeight="2dp"
+        android:padding="8dp"
+        app:layout_constraintTop_toBottomOf="@id/gameHistoryTitle"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp" />
+</androidx.constraintlayout.widget.ConstraintLayout>

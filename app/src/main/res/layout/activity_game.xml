@@ -1,136 +1,133 @@
-<RelativeLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="8dp"
-    android:background="#F9F9F9">
+    android:background="#35524A">
 
+    <!-- Points, Best, Time, Bombs -->
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-    </LinearLayout>
-    <!-- Timer and Personal Best Container -->
-    <LinearLayout
-        android:id="@+id/topInfoContainer"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
         android:orientation="horizontal"
-        android:background="#FFFFFF"
-        android:elevation="4dp"
-        android:layout_marginTop="6dp">
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Timer -->
+        <ImageButton
+            android:id="@+id/homeButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="200dp"
+            android:layout_marginLeft="20dp"
+            android:src="@drawable/ic_logo"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+
+        <TextView
+            android:id="@+id/points"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Points: 0"
+            android:layout_margin="12dp"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/personalBest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Best: 0"
+            android:layout_margin="12dp"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:textSize="16sp" />
+
         <TextView
             android:id="@+id/timer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Time: 0"
-            android:textSize="22sp"
+            android:layout_margin="12dp"
+            android:textColor="#FFFFFF"
             android:textStyle="bold"
-            android:textColor="#333333"
-            android:layout_marginEnd="16dp" />
+            android:textSize="16sp" />
 
-        <!-- Personal Best -->
         <TextView
-            android:id="@+id/personalBest"
+            android:id="@+id/bombCounter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Best: --"
-            android:textSize="22sp"
+            android:text="Bombs Left: 0"
+            android:layout_margin="12dp"
+            android:textColor="#FFFFFF"
             android:textStyle="bold"
-            android:textColor="#4CAF50" />
+            android:textSize="16sp" />
     </LinearLayout>
 
-    <!-- Bomb Counter -->
-    <TextView
-        android:id="@+id/bombCounter"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:text="Bombs: --"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="#FF5722" />
-
-    <!-- Points -->
-    <TextView
-        android:id="@+id/points"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
-        android:text="Points: --"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="#6200EE" />
-
-
-    <!-- Grid Layout for the game board -->
+    <!-- Grid Layout -->
     <androidx.gridlayout.widget.GridLayout
         android:id="@+id/gridLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/topInfoContainer"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="12dp"
-        android:background="@android:color/white"
-        android:elevation="10dp"
-        android:padding="8dp" />
+        android:layout_marginTop="24dp"
+        android:background="#627C85"
+        android:padding="8dp"
+        android:elevation="4dp"
+        app:layout_constraintBottom_toTopOf="@id/buttonPanel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Bottom Button Container -->
+    <!-- Button Panel -->
     <LinearLayout
-        android:id="@+id/buttonContainer"
+        android:id="@+id/buttonPanel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:orientation="horizontal"
-        android:gravity="center"
-        android:weightSum="3">
+        android:gravity="center_vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:paddingHorizontal="16dp">
 
         <!-- Reset Button -->
         <Button
             android:id="@+id/resetButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginEnd="8dp"
             android:text="Reset"
-            android:textSize="16sp"
-            android:textStyle="bold"
+            android:backgroundTint="#32DE8A"
             android:textColor="#FFFFFF"
-            android:backgroundTint="#6200EE" />
+            android:layout_margin="10dp" />
+
+        <!-- Add Space Between Buttons -->
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
 
         <!-- Leaderboard Button -->
         <Button
             android:id="@+id/leaderboardButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_marginEnd="8dp"
             android:text="Leaderboard"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="#FFFFFF"
-            android:backgroundTint="#03A9F4" />
+            android:layout_margin="10dp"
+            android:backgroundTint="#32DE8A"
+            android:textColor="#FFFFFF" />
 
         <!-- Game History Button -->
         <Button
             android:id="@+id/gameHistoryButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="Game History"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="#FFFFFF"
-            android:backgroundTint="#FF9800" />
+            android:layout_margin="10dp"
+            android:backgroundTint="#32DE8A"
+            android:textColor="#FFFFFF" />
     </LinearLayout>
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

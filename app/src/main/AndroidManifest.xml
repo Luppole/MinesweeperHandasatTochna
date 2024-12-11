@@ -24,6 +24,7 @@
         <activity android:name=".GameActivity"
             android:screenOrientation="landscape" />
 
+        <activity android:name=".FriendRequestsActivity" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".SignupActivity" />
         <activity android:name=".ProfileActivity" />

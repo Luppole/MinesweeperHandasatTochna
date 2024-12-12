@@ -14,6 +14,6 @@ public class HintItem {
                 }
             }
         }
-        return false; // No valid hint location found
+        return false; // No valid hint location fou
     }
 }

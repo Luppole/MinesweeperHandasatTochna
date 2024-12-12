@@ -2,7 +2,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#9B9999"
+    android:background="#256D1D"
     android:padding="16dp">
 
     <LinearLayout
@@ -10,36 +10,36 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <!-- Home Button -->
         <ImageButton
             android:id="@+id/homeButton"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_margin="0dp"
-            android:src="@drawable/ic_logo"
-            android:background="?attr/selectableItemBackgroundBorderless" />
+            android:background="@drawable/back_texture" />
 
-
-        <!-- Profile Information -->
+        <!-- Profile Title -->
         <TextView
-            android:fontFamily="@font/pixellari"
             android:id="@+id/profileTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Profile"
-            android:textSize="48sp"
+            android:textSize="58sp"
+            android:fontFamily="@font/pixellari"
             android:textStyle="bold"
             android:gravity="center"
             android:textColor="#000000"
             android:layout_marginBottom="16dp" />
 
+        <!-- Email and Nickname -->
         <TextView
             android:id="@+id/emailTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/pixellari"
             android:text="Email: "
-            android:textColor="@color/textPrimary"
-            android:textSize="24sp"
+            android:textColor="#FFFFFF"
+            android:textSize="28sp"
             android:layout_marginBottom="8dp" />
 
         <TextView
@@ -52,18 +52,14 @@
             android:textSize="18sp"
             android:layout_marginBottom="8dp" />
 
-        <!-- Nickname Section -->
+        <!-- Nickname Input -->
         <EditText
             android:id="@+id/nicknameInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/pixellari"
             android:hint="Enter new nickname"
-            android:layout_marginBottom="8dp" />
-
-        <Space
-            android:layout_width="wrap_content"
-            android:layout_height="15dp" />
+            android:layout_marginBottom="16dp" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/saveNicknameButton"
@@ -77,40 +73,33 @@
             android:padding="12dp"
             android:layout_marginBottom="16dp" />
 
-        <!-- Friends Leaderboard Section -->
+        <!-- Friends List Section -->
         <TextView
-            android:id="@+id/friendsLeaderboardTitle"
+            android:id="@+id/friendsListTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/pixellari"
-            android:text="Friends Leaderboard"
-            android:textSize="20sp"
+            android:text="Friends List"
+            android:textSize="24sp"
             android:textStyle="bold"
-            android:textColor="#000000"
+            android:textColor="#FFFFFF"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="8dp" />
 
-        <ListView
-            android:id="@+id/friendsLeaderboardList"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/friendsRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#627C85"
-            android:divider="#32DE8A"
-            android:dividerHeight="2dp"
             android:padding="8dp" />
-
 
         <ProgressBar
             android:id="@+id/loadingIndicator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:visibility="gone" />
-
-
-        <Space
-            android:layout_width="wrap_content"
-            android:layout_height="50dp" />
+            android:visibility="gone"
+            android:layout_marginTop="16dp" />
 
         <!-- Add Friend Section -->
         <TextView
@@ -119,9 +108,10 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/pixellari"
             android:text="Add a Friend"
-            android:textSize="20sp"
+            android:textSize="24sp"
+            android:layout_marginVertical="16dp"
             android:textStyle="bold"
-            android:textColor="#000000"
+            android:textColor="#FFFFFF"
             android:layout_marginBottom="8dp" />
 
         <EditText
@@ -131,11 +121,7 @@
             android:fontFamily="@font/pixellari"
             android:hint="Enter friend's email"
             android:inputType="textEmailAddress"
-            android:layout_marginBottom="8dp" />
-
-        <Space
-            android:layout_width="wrap_content"
-            android:layout_height="15dp" />
+            android:layout_marginBottom="16dp" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/sendFriendRequestButton"
@@ -146,18 +132,18 @@
             android:layout_gravity="center"
             android:backgroundTint="#4CAF50"
             android:textColor="#FFFFFF"
-            android:padding="12dp" />
+            android:padding="12dp"
+            android:layout_marginBottom="8dp" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/viewFriendRequestsButton"
-            android:layout_width="wrap_content"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:text="View Friend Requests"
+            android:fontFamily="@font/pixellari"
             android:layout_gravity="center"
-            android:layout_marginTop="16dp"
-            android:backgroundTint="#4CAF50"
-            android:textColor="#FFFFFF" />
-
-
+            android:background="@drawable/custom_background_other"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="16dp" />
     </LinearLayout>
 </ScrollView>

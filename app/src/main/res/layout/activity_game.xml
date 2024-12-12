@@ -35,7 +35,7 @@
             android:elevation="10dp"
             android:fontFamily="@font/pixellari"
             android:layout_margin="12dp"
-            android:padding="2dp"
+            android:padding="4dp"
             android:textColor="#FFFFFF"
             android:textStyle="bold"
             android:textSize="16sp" />
@@ -70,7 +70,7 @@
             android:background="#454D45"
             android:elevation="10dp"
             android:layout_margin="12dp"
-            android:padding="2dp"
+            android:padding="4dp"
             android:fontFamily="@font/pixellari"
             android:textColor="#FFFFFF"
             android:textStyle="bold"
@@ -109,7 +109,7 @@
             android:id="@+id/resetButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/custom_background"
+            android:background="@drawable/custom_background_reset"
             android:text="Reset"
             android:fontFamily="@font/pixellari"
             android:textSize="24sp"
@@ -152,7 +152,19 @@
             android:textColor="#FFFFFF"
             android:text="Game History" />
 
-
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/inventoryButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Inventory"
+            android:layout_margin="10dp"
+            android:elevation="10dp"
+            android:fontFamily="@font/pixellari"
+            android:background="@drawable/custom_background_other"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/gridLayout" />
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

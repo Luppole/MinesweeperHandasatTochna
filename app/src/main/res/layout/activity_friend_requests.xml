@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="#55A03D"
     android:padding="16dp">
 
     <TextView
@@ -10,10 +11,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Friend Requests"
+        android:fontFamily="@font/pixellari"
+        android:padding="6dp"
+        android:background="#235015"
         android:textSize="24sp"
         android:textStyle="bold"
         android:gravity="center"
-        android:textColor="#6200EE"
+        android:textColor="#FFFFFF"
         android:layout_marginBottom="16dp" />
 
     <androidx.recyclerview.widget.RecyclerView

@@ -54,7 +54,7 @@
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:text="SIGN UP"
-        android:background="@drawable/custom_background"
+        android:background="@drawable/custom_background_other"
         android:fontFamily="@font/pixellari"
         android:textColor="#FFFFFF"
         android:layout_margin="20dp"

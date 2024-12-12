@@ -5,17 +5,6 @@
     android:layout_height="match_parent"
     android:background="#35524A">
 
-    <!-- Home Button -->
-    <ImageButton
-        android:id="@+id/homeButton"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_margin="16dp"
-        android:src="@drawable/ic_logo"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <!-- Welcome Message -->
     <TextView
         android:id="@+id/welcomeMessage"
@@ -27,9 +16,8 @@
         android:textStyle="bold"
         android:textColor="#FFFFFF"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toEndOf="@id/homeButton"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         android:layout_marginTop="16dp" />
 
     <!-- Button Panel -->
@@ -43,13 +31,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="100dp">
+        android:background="#C2E4CB"
+        android:layout_margin="100dp">
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/playGameButton"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:text="PLAY GAME"
+            android:text="PLAY "
             android:background="@drawable/custom_background"
             android:fontFamily="@font/pixellari"
             android:textColor="#FFFFFF"
@@ -57,21 +46,17 @@
             android:textStyle="bold"
             android:stateListAnimator="@animator/button_animation" />
 
-
-
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/storeButton"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:text="GO TO STORE"
+            android:text="STORE"
             android:background="@drawable/custom_background"
             android:fontFamily="@font/pixellari"
             android:textColor="#FFFFFF"
             android:layout_marginBottom="32dp"
             android:textStyle="bold"
             android:stateListAnimator="@animator/button_animation" />
-
-
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/profileButton"

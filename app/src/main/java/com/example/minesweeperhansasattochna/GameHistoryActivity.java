@@ -1,11 +1,12 @@
 package com.example.minesweeperhansasattochna;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -25,8 +26,8 @@ public class GameHistoryActivity extends AppCompatActivity {
 
     private ListView historyList;
     private DatabaseReference historyRef;
-    private ArrayAdapter<String> adapter;
-    private ArrayList<String> historyData;
+    private HistoryAdapter adapter;
+    private ArrayList<HistoryItem> historyData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,16 +35,17 @@ public class GameHistoryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_game_history);
 
         historyList = findViewById(R.id.historyList);
-        ImageButton homeButton = findViewById(R.id.homeButton);
+        ImageButton backButton = findViewById(R.id.backButton);
         androidx.appcompat.widget.AppCompatButton clearHistoryButton = findViewById(R.id.clearHistoryButton);
 
-        // Set home button click listener to navigate back to main activity
-        homeButton.setOnClickListener(v -> {
-            Intent intent = new Intent(GameHistoryActivity.this, MainActivity.class);
+        // Home button click listener
+        backButton.setOnClickListener(v -> {
+            Intent intent = new Intent(GameHistoryActivity.this, GameActivity.class);
             startActivity(intent);
-            finish(); // Optional to avoid stacking activities
+            finish();
         });
 
+        // Clear history button click listener
         clearHistoryButton.setOnClickListener(v -> clearHistory());
 
         String userEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
@@ -68,30 +70,11 @@ public class GameHistoryActivity extends AppCompatActivity {
                             Boolean won = entry.child("won").getValue(Boolean.class);
 
                             if (difficulty != null && time != null && won != null) {
-                                String result = won ? "Win" : "Loss";
-                                historyData.add(difficulty.toUpperCase() + " - " + result + " - " + time + "s");
+                                historyData.add(new HistoryItem(difficulty.toUpperCase(), time, won));
                             }
                         }
 
-                        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, historyData) {
-                            @Override
-                            public View getView(int position, View convertView, ViewGroup parent) {
-                                View view = super.getView(position, convertView, parent);
-                                TextView textView = (TextView) view.findViewById(android.R.id.text1);
-
-                                // Safely load the font
-                                try {
-                                    Typeface pixellari = ResourcesCompat.getFont(GameHistoryActivity.this, R.font.pixellari);
-                                    textView.setTypeface(pixellari);
-                                } catch (Exception e) {
-                                    Toast.makeText(GameHistoryActivity.this, "Font not found!", Toast.LENGTH_SHORT).show();
-                                }
-
-                                return view;
-                            }
-                        };
-
-                        // Set the adapter to the ListView
+                        adapter = new HistoryAdapter(historyData);
                         historyList.setAdapter(adapter);
                     } else {
                         Toast.makeText(this, "No game history found.", Toast.LENGTH_SHORT).show();
@@ -109,6 +92,78 @@ public class GameHistoryActivity extends AppCompatActivity {
                     }
                     Toast.makeText(this, "Game history cleared successfully!", Toast.LENGTH_SHORT).show();
                 })
-                .addOnFailureListener(e -> Toast.makeText(this, "Failed to clear game history: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                .addOnFailureListener(e -> Toast.makeText(this, "Failed to clear game history.", Toast.LENGTH_SHORT).show());
+    }
+
+    // Custom adapter for the game history
+    private class HistoryAdapter extends BaseAdapter {
+        private final ArrayList<HistoryItem> items;
+
+        public HistoryAdapter(ArrayList<HistoryItem> items) {
+            this.items = items;
+        }
+
+        @Override
+        public int getCount() {
+            return items.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return items.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                convertView = getLayoutInflater().inflate(android.R.layout.simple_list_item_1, parent, false);
+            }
+
+            TextView textView = convertView.findViewById(android.R.id.text1);
+
+            HistoryItem item = items.get(position);
+            textView.setText(String.format("%s - %s - %ds", item.getDifficulty(), item.isWon() ? "Win" : "Loss", item.getTime()));
+
+            // Set font
+            Typeface pixellari = ResourcesCompat.getFont(GameHistoryActivity.this, R.font.pixellari);
+            textView.setTypeface(pixellari);
+
+            // Set background color
+            convertView.setBackgroundColor(item.isWon() ? Color.parseColor("#4CAF50") : Color.parseColor("#F44336")); // Green for win, red for loss
+
+            // Set text color
+            textView.setTextColor(Color.WHITE);
+            return convertView;
+        }
+    }
+
+    // Data class for game history
+    private static class HistoryItem {
+        private final String difficulty;
+        private final long time;
+        private final boolean won;
+
+        public HistoryItem(String difficulty, long time, boolean won) {
+            this.difficulty = difficulty;
+            this.time = time;
+            this.won = won;
+        }
+
+        public String getDifficulty() {
+            return difficulty;
+        }
+
+        public long getTime() {
+            return time;
+        }
+
+        public boolean isWon() {
+            return won;
+        }
     }
 }

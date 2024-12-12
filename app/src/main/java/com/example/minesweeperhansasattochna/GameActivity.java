@@ -1,17 +1,22 @@
 package com.example.minesweeperhansasattochna;
 
 import android.animation.ObjectAnimator;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,7 +24,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.gridlayout.widget.GridLayout;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -35,13 +39,12 @@ public class GameActivity extends AppCompatActivity {
     private int ROWS, COLS, NUM_MINES;
     private GridLayout gridLayout;
     private TextView timer, personalBestView, bombCounterView, pointsView;
-    private LinearLayout itemsBoard; // Items Board for displaying available items
     private Button[][] buttons;
     private ImageButton homeButton;
     private Handler timerHandler = new Handler();
     private boolean gameRunning = false;
     private int timeElapsed = 0;
-    private int bombsLeft;
+    private int bombsLeft, userPoints;
 
     private DatabaseReference userRef, leaderboardRef;
     private String difficulty;
@@ -57,8 +60,9 @@ public class GameActivity extends AppCompatActivity {
         personalBestView = findViewById(R.id.personalBest);
         bombCounterView = findViewById(R.id.bombCounter);
         pointsView = findViewById(R.id.points);
-        // itemsBoard = findViewById(R.id.itemsBoard); // Initialize items board
+        Button inventoryButton = findViewById(R.id.inventoryButton);
         homeButton = findViewById(R.id.homeButton);
+
         Button leaderboardButton = findViewById(R.id.leaderboardButton);
         Button gameHistoryButton = findViewById(R.id.gameHistoryButton);
         Button resetButton = findViewById(R.id.resetButton);
@@ -94,6 +98,8 @@ public class GameActivity extends AppCompatActivity {
             startActivity(leaderboardIntent);
         });
 
+        inventoryButton.setOnClickListener(v -> showInventoryPopup());
+
         gameHistoryButton.setOnClickListener(v -> {
             animateButtonClick(v); // Animate button click
             Intent historyIntent = new Intent(GameActivity.this, GameHistoryActivity.class);
@@ -112,7 +118,6 @@ public class GameActivity extends AppCompatActivity {
         setupGrid();
         startTimer();
         animateGrid();
-        loadPlayerItems(); // Load available items into the Items Board
     }
 
     private void setDifficulty(String difficulty) {
@@ -137,54 +142,189 @@ public class GameActivity extends AppCompatActivity {
         bombsLeft = NUM_MINES; // Initialize bombs left
     }
 
-    private void loadPlayerItems() {
-        userRef.child("items").get().addOnSuccessListener(snapshot -> {
-            if (snapshot.exists()) {
-                itemsBoard.removeAllViews(); // Clear existing buttons
-                for (DataSnapshot itemSnapshot : snapshot.getChildren()) {
-                    String itemName = itemSnapshot.getKey();
-                    int itemCount = itemSnapshot.getValue(Integer.class);
 
-                    if (itemCount > 0) {
-                        addItemButton(itemName, itemCount);
-                    }
+    private void fetchUserPoints() {
+        userRef.child("points").get()
+                .addOnSuccessListener(snapshot -> {
+                    userPoints = snapshot.exists() ? snapshot.getValue(Integer.class) : 0;
+                    pointsView.setText("Points: " + userPoints);
+                })
+                .addOnFailureListener(e -> {
+                    pointsView.setText("Points: --");
+                    Toast.makeText(this, "Failed to fetch points: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private String capitalize(String text) {
+        if (text == null || text.isEmpty()) return text;
+        return text.substring(0, 1).toUpperCase() + text.substring(1);
+    }
+
+
+    private void showInventoryPopup() {
+        // Inflate the inventory popup layout
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View popupView = inflater.inflate(R.layout.activity_inventory_popup, null);
+
+        // Create the popup window
+        final PopupWindow popupWindow = new PopupWindow(popupView, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, true);
+        popupWindow.setElevation(10);
+
+        // Set up buttons
+        Button useHintButton = popupView.findViewById(R.id.useHintButton);
+        Button useSuperHintButton = popupView.findViewById(R.id.useSuperHintButton);
+        Button useShieldButton = popupView.findViewById(R.id.useShieldButton);
+        Button useMineDetectorButton = popupView.findViewById(R.id.useMineDetectorButton);
+        Button closeButton = popupView.findViewById(R.id.closeButton);
+
+        // Load inventory items and enable/disable buttons accordingly
+        setupInventoryButton(userRef, "hint", useHintButton, this::useHintItem);
+        setupInventoryButton(userRef, "superHint", useSuperHintButton, this::useSuperHintItem);
+        setupInventoryButton(userRef, "shield", useShieldButton, this::useShieldItem);
+        setupInventoryButton(userRef, "mineDetector", useMineDetectorButton, this::useMineDetectorItem);
+
+        // Close button logic
+        closeButton.setOnClickListener(v -> popupWindow.dismiss());
+
+        // Add drag functionality
+        popupView.setOnTouchListener(new View.OnTouchListener() {
+            private float initialX, initialY;
+            private float offsetX, offsetY;
+            private boolean isDragging = false;
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        initialX = event.getRawX();
+                        initialY = event.getRawY();
+                        offsetX = event.getRawX() - popupWindow.getContentView().getLeft();
+                        offsetY = event.getRawY() - popupWindow.getContentView().getTop();
+                        isDragging = false;
+                        return true;
+
+                    case MotionEvent.ACTION_MOVE:
+                        float deltaX = event.getRawX() - initialX;
+                        float deltaY = event.getRawY() - initialY;
+
+                        if (!isDragging && (Math.abs(deltaX) > 10 || Math.abs(deltaY) > 10)) {
+                            isDragging = true;
+                        }
+
+                        if (isDragging) {
+                            popupWindow.update((int) (event.getRawX() - offsetX), (int) (event.getRawY() - offsetY), -1, -1);
+                        }
+                        return true;
+
+                    case MotionEvent.ACTION_UP:
+                        if (!isDragging) {
+                            v.performClick(); // Pass click to child views
+                        }
+                        return true;
+
+                    default:
+                        return false;
                 }
             }
-        }).addOnFailureListener(e -> {
-            Toast.makeText(this, "Failed to load items.", Toast.LENGTH_SHORT).show();
         });
+
+        // Show the popup window at the default position
+        popupWindow.showAtLocation(gridLayout, Gravity.NO_GRAVITY, 50, 200);
     }
 
-    private void addItemButton(String itemName, int itemCount) {
-        Button itemButton = new Button(this);
-        itemButton.setText(itemName + " (" + itemCount + ")");
-        itemButton.setOnClickListener(v -> useItem(itemName));
-        itemButton.setBackgroundResource(R.drawable.item_button);
-        itemsBoard.addView(itemButton);
+    // Helper function to configure inventory button
+    private void setupInventoryButton(DatabaseReference userRef, String itemName, Button button, Runnable onUseAction) {
+        userRef.child("items").child(itemName).get().addOnSuccessListener(snapshot -> {
+            int itemCount = snapshot.exists() ? snapshot.getValue(Integer.class) : 0;
+            button.setText(itemName + " (" + itemCount + ")");
+            button.setEnabled(itemCount > 0);
+        }).addOnFailureListener(e -> {
+            button.setText(itemName + " (--)");
+            button.setEnabled(false);
+        });
+
+        button.setOnClickListener(v -> onUseAction.run());
     }
 
-    private void useItem(String itemName) {
-        switch (itemName) {
-            case "hint":
-                useHintItem();
-                break;
-            default:
-                Toast.makeText(this, "Unknown item: " + itemName, Toast.LENGTH_SHORT).show();
-        }
-    }
+
 
     private void useHintItem() {
         boolean hintUsed = HintItem.useHint(board, buttons); // Hint logic encapsulated in HintItem
         if (hintUsed) {
             userRef.child("items").child("hint").get().addOnSuccessListener(snapshot -> {
                 int currentCount = snapshot.exists() ? snapshot.getValue(Integer.class) : 0;
-                userRef.child("items").child("hint").setValue(currentCount - 1)
-                        .addOnSuccessListener(aVoid -> loadPlayerItems());
+                if (currentCount > 0) {
+                    userRef.child("items").child("hint").setValue(currentCount - 1)
+                            .addOnSuccessListener(aVoid -> {
+                                Toast.makeText(this, "Hint successfully used!", Toast.LENGTH_SHORT).show();
+                            })
+                            .addOnFailureListener(e -> Toast.makeText(this, "Failed to update inventory.", Toast.LENGTH_SHORT).show());
+                } else {
+                    Toast.makeText(this, "No hints left in inventory.", Toast.LENGTH_SHORT).show();
+                }
             });
         } else {
             Toast.makeText(this, "No valid hint location available.", Toast.LENGTH_SHORT).show();
         }
     }
+
+    private void useSuperHintItem() {
+        userRef.child("items").child("superHint").get().addOnSuccessListener(snapshot -> {
+            int currentCount = snapshot.exists() ? snapshot.getValue(Integer.class) : 0;
+            if (currentCount > 0) {
+                boolean superHintUsed = SuperHintItem.useSuperHint(board, buttons);
+                if (superHintUsed) {
+                    userRef.child("items").child("superHint").setValue(currentCount - 1)
+                            .addOnSuccessListener(aVoid -> Toast.makeText(this, "Super Hint used successfully! 5 tiles revealed.", Toast.LENGTH_SHORT).show())
+                            .addOnFailureListener(e -> Toast.makeText(this, "Failed to update inventory.", Toast.LENGTH_SHORT).show());
+                } else {
+                    Toast.makeText(this, "Not enough tiles available to reveal with Super Hint.", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(this, "No Super Hints left in inventory.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+    private boolean shieldActive = false;
+
+    public void setShieldActive(boolean isActive) {
+        shieldActive = isActive;
+    }
+
+    private void useShieldItem() {
+        userRef.child("items").child("shield").get().addOnSuccessListener(snapshot -> {
+            int currentCount = snapshot.exists() ? snapshot.getValue(Integer.class) : 0;
+            if (currentCount > 0) {
+                ShieldItem.activateShield(this);
+                userRef.child("items").child("shield").setValue(currentCount - 1)
+                        .addOnSuccessListener(aVoid -> Toast.makeText(this, "Shield activated!", Toast.LENGTH_SHORT).show())
+                        .addOnFailureListener(e -> Toast.makeText(this, "Failed to update inventory.", Toast.LENGTH_SHORT).show());
+            } else {
+                Toast.makeText(this, "No Shields left in inventory.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void useMineDetectorItem() {
+        userRef.child("items").child("mineDetector").get().addOnSuccessListener(snapshot -> {
+            int currentCount = snapshot.exists() ? snapshot.getValue(Integer.class) : 0;
+            if (currentCount > 0) {
+                MineDetectorItem.revealMinesTemporarily(board, buttons, 2000); // 2 seconds
+                userRef.child("items").child("mineDetector").setValue(currentCount - 1)
+                        .addOnSuccessListener(aVoid -> Toast.makeText(this, "Mine Detector activated!", Toast.LENGTH_SHORT).show())
+                        .addOnFailureListener(e -> Toast.makeText(this, "Failed to update inventory.", Toast.LENGTH_SHORT).show());
+            } else {
+                Toast.makeText(this, "No Mine Detectors left in inventory.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+
+
+
 
     private void animateButtonClick(View button) {
         ObjectAnimator animator = ObjectAnimator.ofFloat(button, "scaleX", 1f, 1.1f, 1f);
@@ -194,18 +334,6 @@ public class GameActivity extends AppCompatActivity {
         ObjectAnimator animatorY = ObjectAnimator.ofFloat(button, "scaleY", 1f, 1.1f, 1f);
         animatorY.setDuration(150);
         animatorY.start();
-    }
-
-    private void fetchUserPoints() {
-        userRef.child("points").get()
-                .addOnSuccessListener(snapshot -> {
-                    int currentPoints = snapshot.exists() ? snapshot.getValue(Integer.class) : 0;
-                    pointsView.setText("Points: " + currentPoints);
-                })
-                .addOnFailureListener(e -> {
-                    pointsView.setText("Points: --");
-                    Toast.makeText(this, "Failed to fetch points: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
     }
 
     private void fetchPersonalBest() {
@@ -319,7 +447,7 @@ public class GameActivity extends AppCompatActivity {
                 cellButton.setLayoutParams(params);
 
                 // Set the initial texture to a blank tile
-                cellButton.setBackgroundResource(R.drawable.blank_texture);
+                cellButton.setBackgroundResource(R.drawable.deafault_texture);
 
                 int finalI = i;
                 int finalJ = j;
@@ -417,12 +545,20 @@ public class GameActivity extends AppCompatActivity {
         buttons[row][col].setEnabled(false);
 
         if (board[row][col].isMine) {
-            gameRunning = false;
-            Toast.makeText(this, "Game Over!", Toast.LENGTH_SHORT).show();
-            revealAllMines();
-            stopTimer();
-            recordGameResult(false);
-            return;
+            if (shieldActive) { // Check if the shield is active
+                shieldActive = false; // Deactivate the shield after use
+                board[row][col].isRevealed = false; // Prevent marking this cell as revealed
+                buttons[row][col].setEnabled(true); // Re-enable the button
+                Toast.makeText(this, "Shield activated! You are saved from an explosion.", Toast.LENGTH_SHORT).show();
+                return; // Prevent the game from ending
+            } else {
+                gameRunning = false;
+                Toast.makeText(this, "Game Over!", Toast.LENGTH_SHORT).show();
+                revealAllMines();
+                stopTimer();
+                recordGameResult(false);
+                return;
+            }
         }
 
         if (board[row][col].adjacentMines == 0) {

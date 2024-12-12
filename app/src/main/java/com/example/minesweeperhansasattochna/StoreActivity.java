@@ -22,11 +22,12 @@ public class StoreActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_store);
 
-        // Initialize views
         pointsTextView = findViewById(R.id.pointsTextView);
         View buyHintButton = findViewById(R.id.buyHintButton);
+        View buySuperHintButton = findViewById(R.id.buySuperHintButton);
+        View buyShieldButton = findViewById(R.id.buyShieldButton);
+        View buyMineDetectorButton = findViewById(R.id.buyMineDetectorButton);
 
-        // Firebase setup
         String userEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         if (userEmail != null) {
             userRef = FirebaseDatabase.getInstance("https://minesweeperhandasattochna-default-rtdb.europe-west1.firebasedatabase.app")
@@ -39,8 +40,10 @@ public class StoreActivity extends AppCompatActivity {
             finish();
         }
 
-        // Purchase Hint Button
         buyHintButton.setOnClickListener(v -> purchaseItem("hint", 2000));
+        buySuperHintButton.setOnClickListener(v -> purchaseItem("superHint", 5000));
+        buyShieldButton.setOnClickListener(v -> purchaseItem("shield", 7000));
+        buyMineDetectorButton.setOnClickListener(v -> purchaseItem("mineDetector", 4000));
     }
 
     private void loadUserPoints() {
@@ -60,8 +63,6 @@ public class StoreActivity extends AppCompatActivity {
     private void purchaseItem(String itemName, int cost) {
         if (userPoints >= cost) {
             userPoints -= cost;
-
-            // Deduct points and add item
             userRef.child("points").setValue(userPoints)
                     .addOnSuccessListener(aVoid -> {
                         userRef.child("items").child(itemName).get()
@@ -70,16 +71,11 @@ public class StoreActivity extends AppCompatActivity {
                                     userRef.child("items").child(itemName).setValue(currentCount + 1)
                                             .addOnSuccessListener(aVoid1 -> {
                                                 pointsTextView.setText("Points: " + userPoints);
-                                                Toast.makeText(this, "Item purchased successfully!", Toast.LENGTH_SHORT).show();
-                                            })
-                                            .addOnFailureListener(e -> {
-                                                Toast.makeText(this, "Failed to update items.", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(this, itemName + " purchased successfully!", Toast.LENGTH_SHORT).show();
                                             });
                                 });
                     })
-                    .addOnFailureListener(e -> {
-                        Toast.makeText(this, "Failed to deduct points.", Toast.LENGTH_SHORT).show();
-                    });
+                    .addOnFailureListener(e -> Toast.makeText(this, "Failed to deduct points.", Toast.LENGTH_SHORT).show());
         } else {
             Toast.makeText(this, "Not enough points!", Toast.LENGTH_SHORT).show();
         }

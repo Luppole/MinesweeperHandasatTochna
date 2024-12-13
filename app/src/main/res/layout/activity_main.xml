@@ -20,6 +20,21 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp" />
 
+    <!-- Rules Button -->
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/rulesButton"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:text="RULES"
+        android:background="@drawable/custom_background_other"
+        android:fontFamily="@font/pixellari"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:padding="8dp"
+        android:layout_margin="8dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <!-- Button Panel -->
     <LinearLayout
         android:id="@+id/buttonPanel"

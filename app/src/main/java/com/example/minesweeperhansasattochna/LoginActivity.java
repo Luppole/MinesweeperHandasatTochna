@@ -49,9 +49,10 @@ public class LoginActivity extends AppCompatActivity {
             mAuth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
-                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            // Start the loading screen
+                            Intent intent = new Intent(LoginActivity.this, LoadingActivity.class);
                             startActivity(intent);
-                            finish();
+                            finish(); // Close the LoginActivity
                         } else {
                             Toast.makeText(LoginActivity.this, "Authentication failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }

@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -21,6 +22,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mAuth = FirebaseAuth.getInstance();
+        Button rulesButton = findViewById(R.id.rulesButton);
+        rulesButton.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, RulesActivity.class); // Replace with actual rules activity
+            startActivity(intent);
+        });
+
 
         Button logoutButton = findViewById(R.id.signOutButton);
         logoutButton.setOnClickListener(v -> {

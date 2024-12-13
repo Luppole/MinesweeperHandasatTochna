@@ -4,6 +4,7 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
@@ -48,6 +49,7 @@ public class GameActivity extends AppCompatActivity {
     private NotificationService notificationService; // Add NotificationService as a member variable
     private DatabaseReference userRef, leaderboardRef;
     private String difficulty;
+    private MediaPlayer explosionSound;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -259,10 +261,7 @@ public class GameActivity extends AppCompatActivity {
                     userRef.child("items").child("hint").setValue(currentCount - 1)
                             .addOnSuccessListener(aVoid -> {
                                 Toast.makeText(this, "Hint successfully used!", Toast.LENGTH_SHORT).show();
-                            })
-                            .addOnFailureListener(e -> Toast.makeText(this, "Failed to update inventory.", Toast.LENGTH_SHORT).show());
-                } else {
-                    Toast.makeText(this, "No hints left in inventory.", Toast.LENGTH_SHORT).show();
+                            });
                 }
             });
         }
@@ -275,10 +274,7 @@ public class GameActivity extends AppCompatActivity {
                 boolean superHintUsed = SuperHintItem.useSuperHint(board, buttons);
                 if (superHintUsed) {
                     userRef.child("items").child("superHint").setValue(currentCount - 1)
-                            .addOnSuccessListener(aVoid -> Toast.makeText(this, "Super Hint used successfully! 5 tiles revealed.", Toast.LENGTH_SHORT).show())
-                            .addOnFailureListener(e -> Toast.makeText(this, "Failed to update inventory.", Toast.LENGTH_SHORT).show());
-                } else {
-                    Toast.makeText(this, "Not enough tiles available to reveal with Super Hint.", Toast.LENGTH_SHORT).show();
+                            .addOnSuccessListener(aVoid -> Toast.makeText(this, "Super Hint used successfully! 5 tiles revealed.", Toast.LENGTH_SHORT).show());
                 }
             }
         });
@@ -297,8 +293,7 @@ public class GameActivity extends AppCompatActivity {
             if (currentCount > 0) {
                 ShieldItem.activateShield(this);
                 userRef.child("items").child("shield").setValue(currentCount - 1)
-                        .addOnSuccessListener(aVoid -> Toast.makeText(this, "Shield activated!", Toast.LENGTH_SHORT).show())
-                        .addOnFailureListener(e -> Toast.makeText(this, "Failed to update inventory.", Toast.LENGTH_SHORT).show());
+                        .addOnSuccessListener(aVoid -> Toast.makeText(this, "Shield activated!", Toast.LENGTH_SHORT).show());
             }
         });
     }
@@ -309,14 +304,17 @@ public class GameActivity extends AppCompatActivity {
             if (currentCount > 0) {
                 MineDetectorItem.revealMinesTemporarily(board, buttons, 2000); // 2 seconds
                 userRef.child("items").child("mineDetector").setValue(currentCount - 1)
-                        .addOnSuccessListener(aVoid -> Toast.makeText(this, "Mine Detector activated!", Toast.LENGTH_SHORT).show())
-                        .addOnFailureListener(e -> Toast.makeText(this, "Failed to update inventory.", Toast.LENGTH_SHORT).show());
-            }
+                        .addOnSuccessListener(aVoid -> Toast.makeText(this, "Mine Detector activated!", Toast.LENGTH_SHORT).show());}
         });
     }
 
 
-
+    private void playExplosionSound() {
+        if (explosionSound == null) {
+            explosionSound = MediaPlayer.create(this, R.raw.explosion); // Ensure your sound file is in res/raw
+        }
+        explosionSound.start();
+    }
 
 
 
@@ -530,6 +528,25 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
+    private void showWinPopup() {
+        View popupView = LayoutInflater.from(this).inflate(R.layout.activity_popup_win, null);
+        PopupWindow popupWindow = new PopupWindow(popupView, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, true);
+
+        popupWindow.showAtLocation(gridLayout, Gravity.CENTER, 0, 0);
+
+        new Handler().postDelayed(popupWindow::dismiss, 2000); // Auto-dismiss after 2 seconds
+    }
+
+    private void showLossPopup() {
+        View popupView = LayoutInflater.from(this).inflate(R.layout.activity_popup_loss, null);
+        PopupWindow popupWindow = new PopupWindow(popupView, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, true);
+
+        popupWindow.showAtLocation(gridLayout, Gravity.CENTER, 0, 0);
+
+        new Handler().postDelayed(popupWindow::dismiss, 2000); // Auto-dismiss after 2 seconds
+    }
+
+
     private void revealCell(int row, int col) {
         if (!gameRunning || board[row][col].isRevealed || board[row][col].isFlagged) return;
 
@@ -544,6 +561,8 @@ public class GameActivity extends AppCompatActivity {
                 Toast.makeText(this, "Shield activated! You are saved from an explosion.", Toast.LENGTH_SHORT).show();
                 return; // Prevent the game from ending
             } else {
+                playExplosionSound(); // Play the explosion sound
+                showLossPopup();
                 gameRunning = false;
                 notificationService.sendNotification(
                         "Defeat!",
@@ -565,7 +584,7 @@ public class GameActivity extends AppCompatActivity {
 
         if (checkWinCondition()) {
             gameRunning = false;
-            Toast.makeText(this, "You Win!", Toast.LENGTH_SHORT).show();
+            showWinPopup(); // Show the WIN popup
             stopTimer();
             recordGameResult(true);
             updatePersonalBest();
@@ -676,9 +695,6 @@ public class GameActivity extends AppCompatActivity {
                                     GameActivity.class
                             );
                         }
-                    })
-                    .addOnFailureListener(e -> {
-                        Toast.makeText(GameActivity.this, "Failed to save game result: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     });
         }
     }
@@ -805,7 +821,7 @@ public class GameActivity extends AppCompatActivity {
             bombsLeft--;
         } else {
             // Reset to default tile background when unflagged
-            buttons[row][col].setBackgroundResource(R.drawable.blank_texture);
+            buttons[row][col].setBackgroundResource(R.drawable.deafault_texture);
             bombsLeft++;
         }
 

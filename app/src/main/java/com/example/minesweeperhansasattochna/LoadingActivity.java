@@ -3,6 +3,7 @@ package com.example.minesweeperhansasattochna;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 public class LoadingActivity extends AppCompatActivity {
@@ -12,11 +13,15 @@ public class LoadingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading);
 
-        // Delay for 2 seconds, then transition to MainActivity
+        // Retrieve "isGuest" flag from the intent
+        boolean isGuest = getIntent().getBooleanExtra("isGuest", false);
+
+        // Simulate loading delay
         new Handler().postDelayed(() -> {
             Intent intent = new Intent(LoadingActivity.this, MainActivity.class);
+            intent.putExtra("isGuest", isGuest); // Pass "isGuest" flag to MainActivity
             startActivity(intent);
-            finish(); // Close the loading screen
-        }, 2000); // 2000 milliseconds = 2 seconds
+            finish();
+        }, 2000); // 2 seconds delay
     }
 }

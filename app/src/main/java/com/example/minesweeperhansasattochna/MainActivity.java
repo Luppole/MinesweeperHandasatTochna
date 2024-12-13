@@ -8,9 +8,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatButton;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -21,36 +21,67 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Initialize Firebase Authentication
         mAuth = FirebaseAuth.getInstance();
+
+        // Check if the user is logged in or playing as a guest
+        boolean isGuest = getIntent().getBooleanExtra("isGuest", false);
+        String userEmail = isGuest ? "Guest" : (mAuth.getCurrentUser() != null ? mAuth.getCurrentUser().getEmail() : "Unknown");
+
+        if (!isGuest && mAuth.getCurrentUser() == null) {
+            // Redirect to LoginActivity if not logged in and not playing as a guest
+            Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(loginIntent);
+            finish();
+            return;
+        }
+
+        // Display logged-in email
+        TextView loggedInTextView = findViewById(R.id.loggedInTextView);
+        loggedInTextView.setText("Logged in with: " + userEmail);
+
+        // Initialize UI Elements
         Button rulesButton = findViewById(R.id.rulesButton);
-        rulesButton.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, RulesActivity.class); // Replace with actual rules activity
-            startActivity(intent);
-        });
-
-
         Button logoutButton = findViewById(R.id.signOutButton);
-        logoutButton.setOnClickListener(v -> {
-            mAuth.signOut(); // Sign out the user
-            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-            startActivity(intent);
-            finish(); // Close the current activity
+        Button profileButton = findViewById(R.id.profileButton);
+        Button playGameButton = findViewById(R.id.playGameButton);
+        Button storeButton = findViewById(R.id.storeButton);
+
+        // Rules Button Click Listener
+        rulesButton.setOnClickListener(v -> {
+            Intent rulesIntent = new Intent(MainActivity.this, RulesActivity.class);
+            startActivity(rulesIntent);
         });
 
-        Button profileButton = findViewById(R.id.profileButton);
+        // Logout Button Click Listener
+        if (isGuest) {
+            logoutButton.setText("Exit");
+            logoutButton.setOnClickListener(v -> {
+                finish(); // Exit the app for guest users
+            });
+        } else {
+            logoutButton.setOnClickListener(v -> {
+                mAuth.signOut(); // Sign out the user
+                Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(loginIntent);
+                finish();
+            });
+        }
+
+        // Profile Button Click Listener
         profileButton.setOnClickListener(v -> {
             Intent profileIntent = new Intent(MainActivity.this, ProfileActivity.class);
             startActivity(profileIntent);
         });
 
-        Button playGameButton = findViewById(R.id.playGameButton);
+        // Play Game Button Click Listener
         playGameButton.setOnClickListener(this::onButtonShowPopupWindowClick);
 
-        // Initialize Store Button outside the popup logic
-        Button storeButton = findViewById(R.id.storeButton);
+        // Store Button Click Listener
         storeButton.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, StoreActivity.class);
-            startActivity(intent);
+            Intent storeIntent = new Intent(MainActivity.this, StoreActivity.class);
+            startActivity(storeIntent);
         });
     }
 

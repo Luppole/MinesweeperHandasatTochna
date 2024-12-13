@@ -22,18 +22,33 @@ public class LoginActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private EditText emailField, passwordField;
-    private Button loginButton;
+    private Button loginButton, guestButton;
     private TextView signupRedirect;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Initialize Firebase Authentication
+        mAuth = FirebaseAuth.getInstance();
+
+        // Check if a user is already logged in
+        if (mAuth.getCurrentUser() != null) {
+            // User is logged in, redirect to MainActivity
+            Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(mainIntent);
+            finish(); // Close LoginActivity
+            return;
+        }
+
+        // Set content view if no user is logged in
         setContentView(R.layout.activity_login);
 
-        mAuth = FirebaseAuth.getInstance();
+        // Initialize UI elements
         emailField = findViewById(R.id.emailField);
         passwordField = findViewById(R.id.passwordField);
         loginButton = findViewById(R.id.loginButton);
+        guestButton = findViewById(R.id.guestButton);
         signupRedirect = findViewById(R.id.signupRedirect);
 
         // Handle Login Button Click
@@ -49,14 +64,22 @@ public class LoginActivity extends AppCompatActivity {
             mAuth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
-                            // Start the loading screen
-                            Intent intent = new Intent(LoginActivity.this, LoadingActivity.class);
-                            startActivity(intent);
-                            finish(); // Close the LoginActivity
+                            // Redirect to LoadingActivity before MainActivity
+                            Intent loadingIntent = new Intent(LoginActivity.this, LoadingActivity.class);
+                            startActivity(loadingIntent);
+                            finish();
                         } else {
                             Toast.makeText(LoginActivity.this, "Authentication failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
+        });
+
+        // Handle Guest Button Click
+        guestButton.setOnClickListener(v -> {
+            Intent guestIntent = new Intent(LoginActivity.this, LoadingActivity.class);
+            guestIntent.putExtra("isGuest", true); // Pass the "isGuest" flag
+            startActivity(guestIntent);
+            finish();
         });
 
         // Add Hyperlink to "Sign Up"
@@ -71,8 +94,8 @@ public class LoginActivity extends AppCompatActivity {
         ClickableSpan clickableSpan = new ClickableSpan() {
             @Override
             public void onClick(@NonNull View widget) {
-                Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
-                startActivity(intent);
+                Intent signupIntent = new Intent(LoginActivity.this, SignupActivity.class);
+                startActivity(signupIntent);
             }
 
             @Override

@@ -40,7 +40,7 @@
         android:background="@drawable/custom_edittext"
         android:fontFamily="@font/pixellari"
         android:padding="12dp"
-        android:layout_marginBottom="12dp" />
+        android:layout_marginBottom="8dp" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/loginButton"
@@ -50,9 +50,22 @@
         android:background="@drawable/custom_background"
         android:fontFamily="@font/pixellari"
         android:textColor="#FFFFFF"
-        android:layout_margin="20dp"
+        android:layout_margin="6dp"
         android:textStyle="bold"
         android:stateListAnimator="@animator/button_animation" />
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/guestButton"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:text="Play as Guest"
+        android:background="@drawable/custom_background"
+        android:fontFamily="@font/pixellari"
+        android:textColor="#FFFFFF"
+        android:layout_marginTop="4dp"
+        android:textStyle="bold"
+        android:stateListAnimator="@animator/button_animation" />
+
+
     <TextView
         android:id="@+id/signupRedirect"
         android:layout_width="wrap_content"
@@ -60,7 +73,7 @@
         android:text="Don't have an account? Sign Up"
         android:textColor="@color/textPrimary"
         android:fontFamily="@font/pixellari"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:textSize="15sp"
         android:clickable="true"
         android:focusable="true" />

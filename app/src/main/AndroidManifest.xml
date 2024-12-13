@@ -13,8 +13,9 @@
         android:theme="@style/Theme.MinesweeperHansasatTochna"
         tools:targetApi="31">
 
+        <!-- Set LoginActivity as the Launcher Activity -->
         <activity
-            android:name=".MainActivity"
+            android:name=".LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,12 +23,9 @@
             </intent-filter>
         </activity>
 
-
-        <activity android:name=".GameActivity"
-            android:screenOrientation="landscape" />
-
+        <activity android:name=".MainActivity" android:exported="true" />
+        <activity android:name=".GameActivity" android:screenOrientation="landscape" />
         <activity android:name=".FriendRequestsActivity" />
-        <activity android:name=".LoginActivity" />
         <activity android:name=".SignupActivity" />
         <activity android:name=".ProfileActivity" />
         <activity android:name=".LeaderboardActivity" />
@@ -35,9 +33,9 @@
         <activity android:name=".StoreActivity" />
         <activity android:name=".StatsActivity" />
         <activity android:name=".RulesActivity" />
-        <activity android:name=".LoadingActivity"
+        <activity
+            android:name=".LoadingActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity android:name=".AchievementsActivity" />
-
     </application>
 </manifest>

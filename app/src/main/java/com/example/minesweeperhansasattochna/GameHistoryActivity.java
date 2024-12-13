@@ -2,22 +2,22 @@ package com.example.minesweeperhansasattochna;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.res.ResourcesCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -32,28 +32,24 @@ import java.util.Locale;
 public class GameHistoryActivity extends AppCompatActivity {
 
     private ListView historyList;
+    private Spinner difficultySpinner;
     private DatabaseReference historyRef;
-    private HistoryAdapter adapter;
     private ArrayList<HistoryItem> historyData;
+    private ArrayList<HistoryItem> filteredData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_history);
+        ImageView backButton = findViewById(R.id.backButton);
 
-        historyList = findViewById(R.id.historyList);
-        ImageButton backButton = findViewById(R.id.backButton);
-        androidx.appcompat.widget.AppCompatButton clearHistoryButton = findViewById(R.id.clearHistoryButton);
-
-        // Back button listener
         backButton.setOnClickListener(v -> {
             Intent intent = new Intent(GameHistoryActivity.this, GameActivity.class);
             startActivity(intent);
-            finish();
         });
 
-        // Clear history button listener
-        clearHistoryButton.setOnClickListener(v -> clearHistory());
+        historyList = findViewById(R.id.historyList);
+        difficultySpinner = findViewById(R.id.difficultySpinner);
 
         String userEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         if (userEmail != null) {
@@ -62,55 +58,17 @@ public class GameHistoryActivity extends AppCompatActivity {
                     .child(userEmail.replace(".", ","))
                     .child("gameHistory");
 
-            // Load game history in real-time
-            listenForGameHistoryUpdates();
+            setupSpinner();
+            loadHistoryData();
         } else {
             Toast.makeText(this, "Please log in to view your game history.", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void listenForGameHistoryUpdates() {
-        historyRef.addValueEventListener(new com.google.firebase.database.ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    historyData = new ArrayList<>();
-                    for (DataSnapshot entry : snapshot.getChildren()) {
-                        String difficulty = entry.child("difficulty").getValue(String.class);
-                        Long time = entry.child("timeTaken").getValue(Long.class);
-                        Boolean won = entry.child("won").getValue(Boolean.class);
-                        String timestamp = entry.child("timestamp").getValue(String.class);
-
-                        if (difficulty != null && time != null && won != null && timestamp != null) {
-                            String formattedTimestamp = formatTimestamp(timestamp);
-                            historyData.add(new HistoryItem(difficulty.toUpperCase(), time, won, formattedTimestamp));
-                        }
-                    }
-
-                    // Sort by timestamp (latest first)
-                    Collections.sort(historyData, Comparator.comparing(HistoryItem::getTimestamp).reversed());
-
-                    adapter = new HistoryAdapter(historyData);
-                    historyList.setAdapter(adapter);
-                } else {
-                    historyData = new ArrayList<>();
-                    adapter = new HistoryAdapter(historyData);
-                    historyList.setAdapter(adapter);
-                    Toast.makeText(GameHistoryActivity.this, "No game history found.", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                Toast.makeText(GameHistoryActivity.this, "Failed to load game history.", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
     private String formatTimestamp(String timestamp) {
         try {
             SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault());
-            SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yy : HH:mm:ss", Locale.getDefault());
+            SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy/MM/dd - HH:mm:ss", Locale.getDefault());
             Date date = inputFormat.parse(timestamp);
             return date != null ? outputFormat.format(date) : "Unknown Date";
         } catch (ParseException e) {
@@ -119,26 +77,69 @@ public class GameHistoryActivity extends AppCompatActivity {
         }
     }
 
-    private void clearHistory() {
-        historyRef.get()
-                .addOnSuccessListener(snapshot -> {
-                    if (snapshot.exists()) {
-                        int count = 0;
-                        for (DataSnapshot entry : snapshot.getChildren()) {
-                            if (count >= 10) break; // Stop after deleting 10 entries
-                            entry.getRef().removeValue();
-                            count++;
-                        }
-                        Toast.makeText(this, "Cleared the first 10 entries!", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(this, "No history to clear!", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addOnFailureListener(e -> Toast.makeText(this, "Failed to clear history.", Toast.LENGTH_SHORT).show());
+
+    private void setupSpinner() {
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item,
+                new String[]{"All", "Easy", "Medium", "Hard"});
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        difficultySpinner.setAdapter(spinnerAdapter);
+
+        difficultySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedDifficulty = (String) parent.getItemAtPosition(position);
+                filterHistory(selectedDifficulty);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                filterHistory("All");
+            }
+        });
     }
 
-    // Custom adapter for the game history
+    private void loadHistoryData() {
+        historyData = new ArrayList<>(); // Ensure historyData is initialized
+        historyRef.get().addOnSuccessListener(snapshot -> {
+            for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                String difficulty = dataSnapshot.child("difficulty").getValue(String.class);
+                Long time = dataSnapshot.child("timeTaken").getValue(Long.class);
+                Boolean won = dataSnapshot.child("won").getValue(Boolean.class);
+                String timestamp = dataSnapshot.child("timestamp").getValue(String.class);
+
+                if (difficulty != null && time != null && won != null && timestamp != null) {
+                    historyData.add(new HistoryItem(difficulty, time, won, timestamp));
+                }
+            }
+
+            // Sort history by timestamp (latest first)
+            historyData.sort(Comparator.comparing(HistoryItem::getTimestamp).reversed());
+            filterHistory("All"); // Show all by default
+        }).addOnFailureListener(e -> Toast.makeText(this, "Failed to load history.", Toast.LENGTH_SHORT).show());
+    }
+
+    private void filterHistory(String difficulty) {
+        if (historyData == null) {
+            historyData = new ArrayList<>(); // Ensure historyData is not null
+        }
+
+        if (difficulty.equals("All")) {
+            filteredData = new ArrayList<>(historyData);
+        } else {
+            filteredData = new ArrayList<>();
+            for (HistoryItem item : historyData) {
+                if (item.getDifficulty().equalsIgnoreCase(difficulty)) {
+                    filteredData.add(item);
+                }
+            }
+        }
+
+        HistoryAdapter adapter = new HistoryAdapter(filteredData);
+        historyList.setAdapter(adapter);
+    }
+
     private class HistoryAdapter extends BaseAdapter {
+
         private final ArrayList<HistoryItem> items;
 
         public HistoryAdapter(ArrayList<HistoryItem> items) {
@@ -171,24 +172,20 @@ public class GameHistoryActivity extends AppCompatActivity {
 
             HistoryItem item = items.get(position);
             text1.setText(String.format("%s - %s - %ds", item.getDifficulty(), item.isWon() ? "Win" : "Loss", item.getTime()));
-            text2.setText(String.format("Played On: %s", item.getTimestamp()));
+            text2.setText(String.format("Played On: %s", formatTimestamp(item.getTimestamp())));
 
-            // Set font
-            Typeface pixellari = ResourcesCompat.getFont(GameHistoryActivity.this, R.font.pixellari);
-            text1.setTypeface(pixellari);
-            text2.setTypeface(pixellari);
-
-            // Set background color
-            convertView.setBackgroundColor(item.isWon() ? Color.parseColor("#4CAF50") : Color.parseColor("#F44336")); // Green for win, red for loss
+            // Set background color for win/loss
+            convertView.setBackgroundColor(item.isWon() ? Color.parseColor("#4CAF50") : Color.parseColor("#F44336"));
 
             // Set text color
             text1.setTextColor(Color.WHITE);
             text2.setTextColor(Color.LTGRAY);
+
             return convertView;
         }
+
     }
 
-    // Data class for game history
     private static class HistoryItem {
         private final String difficulty;
         private final long time;

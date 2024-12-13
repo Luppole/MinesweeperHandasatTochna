@@ -32,6 +32,17 @@
         app:layout_constraintHorizontal_bias="0.5"
         android:layout_marginTop="16dp" />
 
+    <!-- Difficulty Spinner -->
+    <Spinner
+        android:id="@+id/difficultySpinner"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="8dp"
+        app:layout_constraintTop_toBottomOf="@id/gameHistoryTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp" />
+
     <!-- ListView for Game History -->
     <ListView
         android:id="@+id/historyList"
@@ -41,13 +52,11 @@
         android:divider="#000000"
         android:dividerHeight="2dp"
         android:padding="8dp"
-        app:layout_constraintTop_toBottomOf="@id/gameHistoryTitle"
+        app:layout_constraintTop_toBottomOf="@id/difficultySpinner"
         app:layout_constraintBottom_toTopOf="@id/clearHistoryButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="20dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp" />
+        android:layout_marginTop="16dp" />
 
     <!-- Clear History Button -->
     <androidx.appcompat.widget.AppCompatButton

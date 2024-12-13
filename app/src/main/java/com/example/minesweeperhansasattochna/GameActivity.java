@@ -263,8 +263,6 @@ public class GameActivity extends AppCompatActivity {
                     Toast.makeText(this, "No hints left in inventory.", Toast.LENGTH_SHORT).show();
                 }
             });
-        } else {
-            Toast.makeText(this, "No valid hint location available.", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -280,8 +278,6 @@ public class GameActivity extends AppCompatActivity {
                 } else {
                     Toast.makeText(this, "Not enough tiles available to reveal with Super Hint.", Toast.LENGTH_SHORT).show();
                 }
-            } else {
-                Toast.makeText(this, "No Super Hints left in inventory.", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -301,8 +297,6 @@ public class GameActivity extends AppCompatActivity {
                 userRef.child("items").child("shield").setValue(currentCount - 1)
                         .addOnSuccessListener(aVoid -> Toast.makeText(this, "Shield activated!", Toast.LENGTH_SHORT).show())
                         .addOnFailureListener(e -> Toast.makeText(this, "Failed to update inventory.", Toast.LENGTH_SHORT).show());
-            } else {
-                Toast.makeText(this, "No Shields left in inventory.", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -315,8 +309,6 @@ public class GameActivity extends AppCompatActivity {
                 userRef.child("items").child("mineDetector").setValue(currentCount - 1)
                         .addOnSuccessListener(aVoid -> Toast.makeText(this, "Mine Detector activated!", Toast.LENGTH_SHORT).show())
                         .addOnFailureListener(e -> Toast.makeText(this, "Failed to update inventory.", Toast.LENGTH_SHORT).show());
-            } else {
-                Toast.makeText(this, "No Mine Detectors left in inventory.", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -345,9 +337,7 @@ public class GameActivity extends AppCompatActivity {
                     } else {
                         personalBestView.setText("Best: --");
                     }
-                })
-                .addOnFailureListener(e -> Toast.makeText(this, "Failed to load personal best.", Toast.LENGTH_SHORT).show());
-    }
+                });}
 
     private void updatePersonalBest() {
         userRef.child("personalBests").child(difficulty).get()
@@ -649,21 +639,23 @@ public class GameActivity extends AppCompatActivity {
                 : "guest";
 
         if (userEmail != null) {
-            DatabaseReference dbRef = FirebaseDatabase.getInstance("https://minesweeperhandasattochna-default-rtdb.europe-west1.firebasedatabase.app")
-                    .getReference("gameHistory");
+            DatabaseReference userRef = FirebaseDatabase.getInstance("https://minesweeperhandasattochna-default-rtdb.europe-west1.firebasedatabase.app")
+                    .getReference("users")
+                    .child(userEmail.replace(".", ","));
 
+            // Save game history
             HashMap<String, Object> gameData = new HashMap<>();
             gameData.put("won", won);
             gameData.put("timeTaken", timeElapsed);
             gameData.put("difficulty", difficulty);
             gameData.put("timestamp", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault()).format(new Date()));
 
-            dbRef.child(userEmail.replace(".", ",")).push().setValue(gameData)
+            userRef.child("gameHistory").push().setValue(gameData)
                     .addOnSuccessListener(aVoid -> {
-                        Toast.makeText(GameActivity.this, "Game result saved!", Toast.LENGTH_SHORT).show();
-
+                        // Update statistics, points, and leaderboard
+                        updateStatistics(userRef, won);
                         if (won) {
-                            updatePoints(userEmail);
+                            updatePoints(userRef);
                             updateLeaderboard(userEmail);
                         }
                     })
@@ -673,17 +665,98 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
-    private void updatePoints(String userEmail) {
-        userRef.child("points").get().addOnSuccessListener(snapshot -> {
-            int currentPoints = snapshot.exists() ? snapshot.getValue(Integer.class) : 0;
-            int newPoints = calculatePoints();
-            int updatedPoints = currentPoints + newPoints;
+    private void updateAchievements(DatabaseReference userRef, int totalGames, int totalWins, int winStreak) {
+        userRef.child("achievements").get().addOnSuccessListener(snapshot -> {
+            HashMap<String, Object> achievementsUpdate = new HashMap<>();
 
-            userRef.child("points").setValue(updatedPoints)
-                    .addOnSuccessListener(aVoid -> pointsView.setText("Points: " + updatedPoints))
-                    .addOnFailureListener(e -> Toast.makeText(this, "Failed to update points: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+            // Update "Play 100 Games" achievement
+            if (snapshot.child("play_100_games/progress").exists()) {
+                int currentProgress = snapshot.child("play_100_games/progress").getValue(Integer.class);
+                int goal = snapshot.child("play_100_games/goal").getValue(Integer.class);
+                int newProgress = Math.min(totalGames, goal); // Ensure progress doesn't exceed the goal
+                achievementsUpdate.put("play_100_games/progress", newProgress);
+            }
+
+            // Update "Win 50 Games" achievement
+            if (snapshot.child("win_50_games/progress").exists()) {
+                int currentProgress = snapshot.child("win_50_games/progress").getValue(Integer.class);
+                int goal = snapshot.child("win_50_games/goal").getValue(Integer.class);
+                int newProgress = Math.min(totalWins, goal);
+                achievementsUpdate.put("win_50_games/progress", newProgress);
+            }
+
+            // Update "Win Streak of 10 Games" achievement
+            if (snapshot.child("win_streak_10/progress").exists()) {
+                int currentProgress = snapshot.child("win_streak_10/progress").getValue(Integer.class);
+                int goal = snapshot.child("win_streak_10/goal").getValue(Integer.class);
+                int newProgress = Math.min(winStreak, goal);
+                achievementsUpdate.put("win_streak_10/progress", newProgress);
+            }
+
+            // Push updated achievements to Firebase
+            userRef.child("achievements").updateChildren(achievementsUpdate)
+                    .addOnSuccessListener(aVoid -> {
+                        Toast.makeText(GameActivity.this, "Achievements updated!", Toast.LENGTH_SHORT).show();
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(GameActivity.this, "Failed to update achievements.", Toast.LENGTH_SHORT).show();
+                    });
         });
     }
+
+
+    private void updateStatistics(DatabaseReference userRef, boolean won) {
+        userRef.child("stats").get().addOnSuccessListener(snapshot -> {
+            int totalWins = snapshot.child("totalWins").exists() ? snapshot.child("totalWins").getValue(Integer.class) : 0;
+            int totalLosses = snapshot.child("totalLosses").exists() ? snapshot.child("totalLosses").getValue(Integer.class) : 0;
+            int winStreak = snapshot.child("winStreak").exists() ? snapshot.child("winStreak").getValue(Integer.class) : 0;
+            int longestStreak = snapshot.child("longestStreak").exists() ? snapshot.child("longestStreak").getValue(Integer.class) : 0;
+            int totalGames = totalWins + totalLosses;
+
+            if (won) {
+                totalWins++;
+                winStreak++;
+                longestStreak = Math.max(longestStreak, winStreak);
+            } else {
+                totalLosses++;
+                winStreak = 0; // Reset win streak on loss
+            }
+
+            totalGames++; // Increment total games for every game played
+
+            // Update achievements
+            updateAchievements(userRef, totalGames, totalWins, winStreak);
+
+            // Save updated stats in Firebase
+            HashMap<String, Object> statsUpdate = new HashMap<>();
+            statsUpdate.put("totalWins", totalWins);
+            statsUpdate.put("totalLosses", totalLosses);
+            statsUpdate.put("totalGames", totalGames); // Ensure total games is updated
+            statsUpdate.put("winStreak", winStreak);
+            statsUpdate.put("longestStreak", longestStreak);
+
+            userRef.child("stats").updateChildren(statsUpdate)
+                    .addOnSuccessListener(aVoid -> {
+                        Toast.makeText(GameActivity.this, "Game statistics updated!", Toast.LENGTH_SHORT).show();
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(GameActivity.this, "Failed to update statistics.", Toast.LENGTH_SHORT).show();
+                    });
+        });
+    }
+
+
+
+    private void updatePoints(DatabaseReference userRef) {
+        userRef.child("points").get().addOnSuccessListener(snapshot -> {
+            int currentPoints = snapshot.exists() ? snapshot.getValue(Integer.class) : 0;
+            int pointsEarned = calculatePoints();
+            int updatedPoints = currentPoints + pointsEarned;
+
+            userRef.child("points").setValue(updatedPoints);
+        });
+    }
+
 
     private int calculatePoints() {
         int basePoints;
@@ -702,16 +775,18 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void updateLeaderboard(String userEmail) {
+        DatabaseReference leaderboardRef = FirebaseDatabase.getInstance("https://minesweeperhandasattochna-default-rtdb.europe-west1.firebasedatabase.app")
+                .getReference("leaderboard")
+                .child(difficulty);
+
         HashMap<String, Object> leaderboardData = new HashMap<>();
         leaderboardData.put("email", userEmail);
         leaderboardData.put("time", timeElapsed);
 
-        leaderboardRef.child(difficulty)
-                .child(userEmail.replace(".", ","))
-                .setValue(leaderboardData)
-                .addOnSuccessListener(aVoid -> Toast.makeText(this, "Leaderboard updated!", Toast.LENGTH_SHORT).show())
-                .addOnFailureListener(e -> Toast.makeText(this, "Failed to update leaderboard: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+        leaderboardRef.child(userEmail.replace(".", ","))
+                .setValue(leaderboardData);
     }
+
 
     private void flagCell(int row, int col) {
         if (!gameRunning || board[row][col].isRevealed) return;

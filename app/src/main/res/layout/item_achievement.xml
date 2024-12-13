@@ -1,0 +1,43 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:background="#627C85">
+
+    <TextView
+        android:id="@+id/achievementTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        android:fontFamily="@font/pixellari" />
+
+    <TextView
+        android:id="@+id/achievementDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#AAAAAA"
+        android:textSize="14sp"
+        android:layout_marginBottom="8dp"
+        android:fontFamily="@font/pixellari" />
+
+    <ProgressBar
+        android:id="@+id/achievementProgressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:progressDrawable="@drawable/progress_bar"
+        android:max="100"
+        android:progress="50" />
+
+    <TextView
+        android:id="@+id/achievementProgressText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        android:fontFamily="@font/pixellari"
+        android:layout_marginTop="4dp" />
+</LinearLayout>

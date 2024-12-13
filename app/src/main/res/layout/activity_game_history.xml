@@ -6,7 +6,7 @@
     android:background="#35524A"
     android:padding="16dp">
 
-    <!-- Home Button -->
+    <!-- Back Button -->
     <ImageButton
         android:id="@+id/backButton"
         android:layout_width="40dp"
@@ -38,7 +38,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="#627C85"
-        android:divider="#32DE8A"
+        android:divider="#000000"
         android:dividerHeight="2dp"
         android:padding="8dp"
         app:layout_constraintTop_toBottomOf="@id/gameHistoryTitle"
@@ -65,4 +65,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

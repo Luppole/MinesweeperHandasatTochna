@@ -1,0 +1,92 @@
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#627C85"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:padding="16dp">
+
+        <!-- Title -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Game Statistics"
+            android:textSize="32sp"
+            android:fontFamily="@font/pixellari"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Games Played -->
+        <TextView
+            android:id="@+id/gamesPlayedView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Games Played: --"
+            android:textSize="20sp"
+            android:fontFamily="@font/pixellari"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Percentage Won -->
+        <TextView
+            android:id="@+id/percentageWonView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Percentage Won: --%"
+            android:textSize="20sp"
+            android:fontFamily="@font/pixellari"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Total Wins -->
+        <TextView
+            android:id="@+id/totalWinsView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total Wins: --"
+            android:textSize="20sp"
+            android:fontFamily="@font/pixellari"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Total Losses -->
+        <TextView
+            android:id="@+id/totalLossesView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total Losses: --"
+            android:textSize="20sp"
+            android:fontFamily="@font/pixellari"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Average Time -->
+        <TextView
+            android:id="@+id/averageTimeView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Average Time: --"
+            android:textSize="20sp"
+            android:fontFamily="@font/pixellari"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Win Streak -->
+        <TextView
+            android:id="@+id/winStreakView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Win Streak: --"
+            android:textSize="20sp"
+            android:fontFamily="@font/pixellari"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="8dp" />
+
+    </LinearLayout>
+</ScrollView>

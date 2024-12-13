@@ -5,17 +5,20 @@
     android:background="@android:color/darker_gray"
     android:orientation="vertical"
     android:gravity="center"
-
     android:padding="24dp">
 
+    <!-- Top Text -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Create Account"
         android:textSize="48sp"
         android:fontFamily="@font/pixellari"
-        android:layout_marginBottom="16dp" />
+        android:textColor="@android:color/white"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="12dp" />
 
+    <!-- Email Field -->
     <EditText
         android:id="@+id/emailField"
         android:layout_width="match_parent"
@@ -27,51 +30,52 @@
         android:padding="12dp"
         android:layout_marginBottom="12dp" />
 
+    <!-- Password Field -->
     <EditText
         android:id="@+id/passwordField"
         android:layout_width="match_parent"
-        android:fontFamily="@font/pixellari"
         android:layout_height="wrap_content"
         android:hint="Password"
         android:inputType="textPassword"
+        android:fontFamily="@font/pixellari"
         android:background="@drawable/custom_edittext"
         android:padding="12dp"
         android:layout_marginBottom="12dp" />
 
+    <!-- Confirm Password Field -->
     <EditText
         android:id="@+id/confirmPasswordField"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Confirm Password"
-        android:fontFamily="@font/pixellari"
         android:inputType="textPassword"
+        android:fontFamily="@font/pixellari"
         android:background="@drawable/custom_edittext"
         android:padding="12dp"
         android:layout_marginBottom="12dp" />
 
+    <!-- Sign Up Button -->
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/signupButton"
-        android:layout_width="100dp"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:text="SIGN UP"
         android:background="@drawable/custom_background_other"
         android:fontFamily="@font/pixellari"
-        android:textColor="#FFFFFF"
-        android:layout_margin="20dp"
+        android:textColor="@android:color/white"
         android:textStyle="bold"
         android:stateListAnimator="@animator/button_animation" />
 
+    <!-- Redirect Text -->
     <TextView
         android:id="@+id/loginRedirect"
         android:layout_width="wrap_content"
-        android:textStyle="bold"
         android:layout_height="wrap_content"
         android:text="Already have an account? Log In"
-        android:textColor="@color/textPrimary"
+        android:textColor="@android:color/white"
         android:fontFamily="@font/pixellari"
         android:textSize="16sp"
-        android:layout_marginTop="16dp"
+        android:layout_margin="10dp"
         android:clickable="true"
         android:focusable="true" />
-
 </LinearLayout>

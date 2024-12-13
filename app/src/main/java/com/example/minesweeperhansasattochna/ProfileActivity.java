@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,6 +46,19 @@ public class ProfileActivity extends AppCompatActivity {
         loadingIndicator = findViewById(R.id.loadingIndicator);
         addFriendInput = findViewById(R.id.addFriendInput);
         friendsRecyclerView = findViewById(R.id.friendsRecyclerView);
+        Button statsButton = findViewById(R.id.statsButton);
+        ImageView backButton = findViewById(R.id.backButton);
+        statsButton.setOnClickListener(v -> {
+            Intent intent = new Intent(ProfileActivity.this, StatsActivity.class);
+            startActivity(intent);
+        });
+
+        findViewById(R.id.viewAchievementsButton).setOnClickListener(v -> {
+            Intent intent = new Intent(ProfileActivity.this, AchievementsActivity.class);
+            startActivity(intent);
+        });
+
+
 
         // Firebase setup
         auth = FirebaseAuth.getInstance();
@@ -60,6 +75,11 @@ public class ProfileActivity extends AppCompatActivity {
             Toast.makeText(this, "User is not logged in.", Toast.LENGTH_SHORT).show();
             finish();
         }
+
+        backButton.setOnClickListener(v -> {
+            Intent intent = new Intent(ProfileActivity.this, MainActivity.class);
+            startActivity(intent);
+        });
 
         findViewById(R.id.saveNicknameButton).setOnClickListener(v -> saveNickname());
         findViewById(R.id.sendFriendRequestButton).setOnClickListener(v -> sendFriendRequest());

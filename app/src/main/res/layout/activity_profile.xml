@@ -12,7 +12,7 @@
 
         <!-- Home Button -->
         <ImageButton
-            android:id="@+id/homeButton"
+            android:id="@+id/backButton"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_margin="0dp"
@@ -72,6 +72,30 @@
             android:textColor="#FFFFFF"
             android:padding="12dp"
             android:layout_marginBottom="16dp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/statsButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="View Statistics"
+            android:layout_gravity="center"
+            android:fontFamily="@font/pixellari"
+            android:background="@drawable/custom_background_other"
+            android:textColor="#FFFFFF"
+            android:layout_margin="16dp"
+            android:padding="12dp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/viewAchievementsButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="View Achievements"
+            android:layout_gravity="center"
+            android:fontFamily="@font/pixellari"
+            android:background="@drawable/custom_background_other"
+            android:textColor="#FFFFFF"
+            android:layout_margin="16dp"
+            android:padding="12dp" />
 
         <!-- Friends List Section -->
         <TextView

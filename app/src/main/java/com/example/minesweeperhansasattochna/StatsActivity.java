@@ -56,7 +56,7 @@ public class StatsActivity extends AppCompatActivity {
                 int totalTime = snapshot.child("totalTime").exists() ? snapshot.child("totalTime").getValue(Integer.class) : 0;
                 int winStreak = snapshot.child("winStreak").exists() ? snapshot.child("winStreak").getValue(Integer.class) : 0;
 
-                // Calculate metrics
+                // Calculate metric
                 float percentageWon = gamesPlayed > 0 ? ((float) gamesWon / gamesPlayed) * 100 : 0;
                 int averageTime = gamesPlayed > 0 ? totalTime / gamesPlayed : 0;
 

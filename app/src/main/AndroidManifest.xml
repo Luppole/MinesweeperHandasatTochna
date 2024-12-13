@@ -20,13 +20,11 @@
             android:exported="true"
             android:theme="@style/Theme.MinesweeperHansasatTochna"
             android:screenOrientation="sensor"> <!-- Allows both portrait and landscape -->
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
 
         <!-- Other activities -->
         <activity android:name=".LoginActivity" android:exported="true" />
@@ -42,6 +40,8 @@
         <activity android:name=".RulesActivity" />
         <activity android:name=".LoadingActivity" android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity android:name=".AchievementsActivity" />
-    </application>
 
+        <!-- Register Notification Reminder Service -->
+        <receiver android:name=".ReminderBroadcastReceiver" />
+    </application>
 </manifest>

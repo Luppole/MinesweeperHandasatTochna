@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Initialize Firebase Authentication
-        mAuth = FirebaseAuth.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
         // Check if the user is logged in or playing as a guest
         boolean isGuest = getIntent().getBooleanExtra("isGuest", false);
@@ -91,7 +91,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Start the daily game reminder service
+        AlarmService alarmService = new AlarmService(this);
+        alarmService.setDailyReminder();
     }
+
 
     public void onButtonShowPopupWindowClick(View view) {
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);

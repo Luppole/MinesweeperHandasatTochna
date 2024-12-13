@@ -1,16 +1,16 @@
 <resources>
 
-    <!-- Base Theme -->
+    <!-- Base App Theme -->
     <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <!-- Set primary colors -->
+        <!-- Primary Colors -->
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primaryDark</item>
         <item name="colorAccent">@color/secondary</item>
 
-        <!-- Set default font -->
-        <item name="android:fontFamily">@fonts/poppins</item>
+        <!-- Default Font -->
+        <item name="android:fontFamily">@font/pixellari</item>
 
-        <!-- Customize default EditText -->
+        <!-- EditText Customization -->
         <item name="editTextStyle">@style/CustomEditTextStyle</item>
     </style>
 

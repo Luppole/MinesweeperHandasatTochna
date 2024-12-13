@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -80,9 +81,16 @@ public class MainActivity extends AppCompatActivity {
 
         // Store Button Click Listener
         storeButton.setOnClickListener(v -> {
-            Intent storeIntent = new Intent(MainActivity.this, StoreActivity.class);
-            startActivity(storeIntent);
+            if (mAuth.getCurrentUser() != null) {
+                // User is logged in, allow access to the store
+                Intent intent = new Intent(MainActivity.this, StoreActivity.class);
+                startActivity(intent);
+            } else {
+                // Show a toast message and deny access
+                Toast.makeText(MainActivity.this, "You need to log in to access the store.", Toast.LENGTH_SHORT).show();
+            }
         });
+
     }
 
     public void onButtonShowPopupWindowClick(View view) {

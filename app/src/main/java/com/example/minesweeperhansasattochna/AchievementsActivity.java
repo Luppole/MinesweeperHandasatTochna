@@ -1,6 +1,7 @@
 package com.example.minesweeperhansasattochna;
 
 import android.os.Bundle;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,6 +32,11 @@ public class AchievementsActivity extends AppCompatActivity {
         achievementsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         allAchievements = AchievementsManager.getAchievements();
+        ImageButton backButton = findViewById(R.id.backButton);
+        backButton.setOnClickListener(v -> {
+            // Navigate back to the previous screen
+            finish(); // This will close the current activity and return to the previous one
+        });
 
         String userEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         if (userEmail != null) {

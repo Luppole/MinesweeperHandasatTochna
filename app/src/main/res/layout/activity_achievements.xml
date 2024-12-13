@@ -6,6 +6,15 @@
     android:background="#35524A"
     android:padding="16dp">
 
+    <!-- Back Button -->
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/back_texture"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <!-- Title -->
     <TextView
         android:id="@+id/achievementsTitle"
@@ -17,7 +26,7 @@
         android:textStyle="bold"
         android:textColor="@android:color/white"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/backButton"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp" />
 

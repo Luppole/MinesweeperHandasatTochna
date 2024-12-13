@@ -2,6 +2,7 @@ package com.example.minesweeperhansasattochna;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +28,7 @@ public class StoreActivity extends AppCompatActivity {
         View buySuperHintButton = findViewById(R.id.buySuperHintButton);
         View buyShieldButton = findViewById(R.id.buyShieldButton);
         View buyMineDetectorButton = findViewById(R.id.buyMineDetectorButton);
+        ImageButton backButton = findViewById(R.id.backButton);
 
         String userEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         if (userEmail != null) {
@@ -44,7 +46,11 @@ public class StoreActivity extends AppCompatActivity {
         buySuperHintButton.setOnClickListener(v -> purchaseItem("superHint", 5000));
         buyShieldButton.setOnClickListener(v -> purchaseItem("shield", 7000));
         buyMineDetectorButton.setOnClickListener(v -> purchaseItem("mineDetector", 4000));
+
+        // Back button logic
+        backButton.setOnClickListener(v -> onBackPressed());
     }
+
 
     private void loadUserPoints() {
         userRef.child("points").get().addOnSuccessListener(snapshot -> {
@@ -58,6 +64,15 @@ public class StoreActivity extends AppCompatActivity {
             pointsTextView.setText("Points: --");
             Toast.makeText(this, "Failed to load points.", Toast.LENGTH_SHORT).show();
         });
+
+        if (userPoints >= 2000) {
+            NotificationService notificationService = new NotificationService(this);
+            notificationService.sendNotification(
+                    "Store Update",
+                    "You have enough points to buy a Hint!",
+                    StoreActivity.class
+            );
+        }
     }
 
     private void purchaseItem(String itemName, int cost) {

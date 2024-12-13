@@ -45,7 +45,7 @@ public class GameActivity extends AppCompatActivity {
     private boolean gameRunning = false;
     private int timeElapsed = 0;
     private int bombsLeft, userPoints;
-
+    private NotificationService notificationService; // Add NotificationService as a member variable
     private DatabaseReference userRef, leaderboardRef;
     private String difficulty;
 
@@ -62,7 +62,6 @@ public class GameActivity extends AppCompatActivity {
         pointsView = findViewById(R.id.points);
         Button inventoryButton = findViewById(R.id.inventoryButton);
         homeButton = findViewById(R.id.homeButton);
-
         Button leaderboardButton = findViewById(R.id.leaderboardButton);
         Button gameHistoryButton = findViewById(R.id.gameHistoryButton);
         Button resetButton = findViewById(R.id.resetButton);
@@ -110,6 +109,9 @@ public class GameActivity extends AppCompatActivity {
             animateButtonClick(v); // Animate button click
             resetGame();
         });
+
+        // Notification Service Initialization
+        notificationService = new NotificationService(this);
 
         // Other initializations
         setDifficulty(difficulty);
@@ -543,8 +545,11 @@ public class GameActivity extends AppCompatActivity {
                 return; // Prevent the game from ending
             } else {
                 gameRunning = false;
-                Toast.makeText(this, "Game Over!", Toast.LENGTH_SHORT).show();
-                revealAllMines();
+                notificationService.sendNotification(
+                        "Defeat!",
+                        "You lost the game. Try again!",
+                        GameActivity.class
+                );                revealAllMines();
                 stopTimer();
                 recordGameResult(false);
                 return;
@@ -655,8 +660,21 @@ public class GameActivity extends AppCompatActivity {
                         // Update statistics, points, and leaderboard
                         updateStatistics(userRef, won);
                         if (won) {
+                            notificationService.sendNotification(
+                                    "Victory!",
+                                    "You won the game! Play again to keep winning!",
+                                    GameActivity.class
+                            );
                             updatePoints(userRef);
                             updateLeaderboard(userEmail);
+                        }
+                        else {
+                            NotificationService notificationService = new NotificationService(this);
+                            notificationService.sendNotification(
+                                    "Defeat!",
+                                    "You lost the game. Try again!",
+                                    GameActivity.class
+                            );
                         }
                     })
                     .addOnFailureListener(e -> {
@@ -694,13 +712,7 @@ public class GameActivity extends AppCompatActivity {
             }
 
             // Push updated achievements to Firebase
-            userRef.child("achievements").updateChildren(achievementsUpdate)
-                    .addOnSuccessListener(aVoid -> {
-                        Toast.makeText(GameActivity.this, "Achievements updated!", Toast.LENGTH_SHORT).show();
-                    })
-                    .addOnFailureListener(e -> {
-                        Toast.makeText(GameActivity.this, "Failed to update achievements.", Toast.LENGTH_SHORT).show();
-                    });
+            userRef.child("achievements").updateChildren(achievementsUpdate);
         });
     }
 
@@ -735,13 +747,7 @@ public class GameActivity extends AppCompatActivity {
             statsUpdate.put("winStreak", winStreak);
             statsUpdate.put("longestStreak", longestStreak);
 
-            userRef.child("stats").updateChildren(statsUpdate)
-                    .addOnSuccessListener(aVoid -> {
-                        Toast.makeText(GameActivity.this, "Game statistics updated!", Toast.LENGTH_SHORT).show();
-                    })
-                    .addOnFailureListener(e -> {
-                        Toast.makeText(GameActivity.this, "Failed to update statistics.", Toast.LENGTH_SHORT).show();
-                    });
+            userRef.child("stats").updateChildren(statsUpdate);
         });
     }
 

@@ -1,6 +1,8 @@
 package com.example.minesweeperhansasattochna;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +33,10 @@ public class StatsActivity extends AppCompatActivity {
         totalLossesView = findViewById(R.id.totalLossesView);
         averageTimeView = findViewById(R.id.averageTimeView);
         winStreakView = findViewById(R.id.winStreakView);
+        ImageButton backButton = findViewById(R.id.backButton);
+
+        // Back button logic
+        backButton.setOnClickListener(v -> onBackPressed());
 
         // Firebase reference setup
         String userEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
@@ -50,13 +56,17 @@ public class StatsActivity extends AppCompatActivity {
     private void loadStats() {
         userStatsRef.get().addOnSuccessListener(snapshot -> {
             if (snapshot.exists()) {
-                gamesPlayed = snapshot.child("gamesPlayed").exists() ? snapshot.child("gamesPlayed").getValue(Integer.class) : 0;
+                // Fetch totalWins and totalLosses from the snapshot
                 gamesWon = snapshot.child("totalWins").exists() ? snapshot.child("totalWins").getValue(Integer.class) : 0;
                 gamesLost = snapshot.child("totalLosses").exists() ? snapshot.child("totalLosses").getValue(Integer.class) : 0;
+
+                // Calculate gamesPlayed as the sum of wins and losses
+                gamesPlayed = gamesWon + gamesLost;
+
                 int totalTime = snapshot.child("totalTime").exists() ? snapshot.child("totalTime").getValue(Integer.class) : 0;
                 int winStreak = snapshot.child("winStreak").exists() ? snapshot.child("winStreak").getValue(Integer.class) : 0;
 
-                // Calculate metric
+                // Calculate metrics
                 float percentageWon = gamesPlayed > 0 ? ((float) gamesWon / gamesPlayed) * 100 : 0;
                 int averageTime = gamesPlayed > 0 ? totalTime / gamesPlayed : 0;
 

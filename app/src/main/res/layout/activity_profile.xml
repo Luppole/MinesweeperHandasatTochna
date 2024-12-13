@@ -2,7 +2,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#256D1D"
+    android:background="#35524A"
     android:padding="16dp">
 
     <LinearLayout
@@ -73,29 +73,35 @@
             android:padding="12dp"
             android:layout_marginBottom="16dp" />
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/statsButton"
-            android:layout_width="wrap_content"
+        <!-- Stats and Achievements Buttons Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="View Statistics"
-            android:layout_gravity="center"
-            android:fontFamily="@font/pixellari"
-            android:background="@drawable/custom_background_other"
-            android:textColor="#FFFFFF"
-            android:layout_margin="16dp"
-            android:padding="12dp" />
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginBottom="16dp">
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/viewAchievementsButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="View Achievements"
-            android:layout_gravity="center"
-            android:fontFamily="@font/pixellari"
-            android:background="@drawable/custom_background_other"
-            android:textColor="#FFFFFF"
-            android:layout_margin="16dp"
-            android:padding="12dp" />
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/statsButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="View Statistics"
+                android:fontFamily="@font/pixellari"
+                android:background="@drawable/custom_background_other"
+                android:textColor="#FFFFFF"
+                android:layout_marginEnd="8dp"
+                android:padding="12dp" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/viewAchievementsButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="View Achievements"
+                android:fontFamily="@font/pixellari"
+                android:background="@drawable/custom_background_other"
+                android:textColor="#FFFFFF"
+                android:padding="12dp" />
+        </LinearLayout>
 
         <!-- Friends List Section -->
         <TextView
@@ -147,27 +153,34 @@
             android:inputType="textEmailAddress"
             android:layout_marginBottom="16dp" />
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/sendFriendRequestButton"
-            android:layout_width="wrap_content"
+        <!-- Send and View Friend Requests Buttons Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Send Friend Request"
-            android:fontFamily="@font/pixellari"
-            android:layout_gravity="center"
-            android:backgroundTint="#4CAF50"
-            android:textColor="#FFFFFF"
-            android:padding="12dp"
-            android:layout_marginBottom="8dp" />
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginBottom="16dp">
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/viewFriendRequestsButton"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:text="View Friend Requests"
-            android:fontFamily="@font/pixellari"
-            android:layout_gravity="center"
-            android:background="@drawable/custom_background_other"
-            android:textColor="#FFFFFF"
-            android:layout_marginBottom="16dp" />
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/sendFriendRequestButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Send Friend Request"
+                android:fontFamily="@font/pixellari"
+                android:background="@drawable/custom_background"
+                android:textColor="#FFFFFF"
+                android:layout_marginEnd="8dp"
+                android:padding="12dp" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/viewFriendRequestsButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="View Friend Requests"
+                android:fontFamily="@font/pixellari"
+                android:background="@drawable/custom_background_other"
+                android:textColor="#FFFFFF"
+                android:padding="12dp" />
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>

@@ -1,6 +1,7 @@
 package com.example.minesweeperhansasattochna;
 
 import android.os.Bundle;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,6 +27,10 @@ public class FriendRequestsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friend_requests);
 
+        // Initialize back button
+        ImageButton backButton = findViewById(R.id.backButton);
+        backButton.setOnClickListener(v -> onBackPressed());
+
         friendRequestsRecyclerView = findViewById(R.id.friendRequestsRecyclerView);
         friendRequestsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -43,6 +48,7 @@ public class FriendRequestsActivity extends AppCompatActivity {
             finish();
         }
     }
+
 
     private void loadFriendRequests() {
         userRef.get().addOnSuccessListener(snapshot -> {

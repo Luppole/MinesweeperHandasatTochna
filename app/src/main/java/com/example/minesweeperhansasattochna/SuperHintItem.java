@@ -62,7 +62,7 @@ public class SuperHintItem {
             case 8:
                 return R.drawable.eight_texture;
             default:
-                return R.drawable.empty_texture;
+                return R.drawable.blank_texture;
         }
     }
 }

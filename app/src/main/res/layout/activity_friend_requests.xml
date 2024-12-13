@@ -6,6 +6,15 @@
     android:background="#55A03D"
     android:padding="16dp">
 
+    <!-- Back Button -->
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/back_texture" />
+
+    <!-- Title -->
     <TextView
         android:id="@+id/friendRequestsTitle"
         android:layout_width="match_parent"
@@ -20,6 +29,7 @@
         android:textColor="#FFFFFF"
         android:layout_marginBottom="16dp" />
 
+    <!-- RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/friendRequestsRecyclerView"
         android:layout_width="match_parent"

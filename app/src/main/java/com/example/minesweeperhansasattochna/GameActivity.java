@@ -524,7 +524,7 @@ public class GameActivity extends AppCompatActivity {
             case 8:
                 return getDrawable(R.drawable.eight_texture);
             default:
-                return getDrawable(R.drawable.empty_texture);
+                return getDrawable(R.drawable.blank_texture);
         }
     }
 

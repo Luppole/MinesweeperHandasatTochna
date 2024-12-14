@@ -1,8 +1,9 @@
 # **🎮 פרויקט מסכם בהנדסת תוכנה - 5 יח"ל**  
 ### 🧑‍💻 איתמר פרץ כהן - ת.ז REDACTED  
 
-![Logo](app/src/main/res/drawable/logo_texture.png)
-
+<div align="center">
+  <img src="app/src/main/res/drawable/logo_texture.png" alt="Logo">
+</div>
 ---
 
 ## ✨ **פיצ'רים מרכזיים:**  

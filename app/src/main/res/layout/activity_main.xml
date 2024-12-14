@@ -34,21 +34,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="8dp" />
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/settingsButton"
-        android:layout_width="120dp"
-        android:layout_height="wrap_content"
-        android:text="SETTINGS"
-        android:background="@drawable/custom_background"
-        android:fontFamily="@font/pixellari"
-        android:textColor="#FFFFFF"
-        android:textStyle="bold"
-        android:stateListAnimator="@animator/button_animation"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="16dp" />
-
-
     <!-- Rules Button -->
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/rulesButton"
@@ -69,7 +54,7 @@
     <!-- Button Panel -->
     <LinearLayout
         android:id="@+id/buttonPanel"
-        android:layout_width="300dp"
+        android:layout_width="260dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:elevation="100dp"
@@ -79,7 +64,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:background="#C2E4CB"
-        android:layout_margin="70dp">
+        android:layout_margin="40dp">
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/playGameButton"
@@ -92,7 +77,7 @@
             android:background="@drawable/custom_background"
             android:fontFamily="@font/pixellari"
             android:textColor="#FFFFFF"
-            android:layout_margin="20dp"
+            android:layout_margin="15dp"
             android:textStyle="bold"
             android:stateListAnimator="@animator/button_animation" />
 
@@ -106,7 +91,7 @@
             android:background="@drawable/custom_background"
             android:fontFamily="@font/pixellari"
             android:textColor="#FFFFFF"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="15dp"
             android:textStyle="bold"
             android:stateListAnimator="@animator/button_animation" />
 
@@ -119,10 +104,25 @@
             android:background="@drawable/custom_background"
             android:fontFamily="@font/pixellari"
             android:textColor="#FFFFFF"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="15dp"
             android:textSize="30dp"
             android:textStyle="bold"
             android:stateListAnimator="@animator/button_animation" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/settingsButton"
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
+            android:text="SETTINGS"
+            android:background="@drawable/custom_background_other"
+            android:fontFamily="@font/pixellari"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:textSize="30dp"
+            android:layout_marginBottom="15dp"
+            android:stateListAnimator="@animator/button_animation"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
     </LinearLayout>
 
     <!-- Sign Out Button -->

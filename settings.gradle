@@ -22,5 +22,5 @@ dependencyResolutionManagement {
 
 
 
-rootProject.name = "MinesweeperHansasatTochna"
+rootProject.name = "MinesweeperHandasatTochna"
 include ':app'

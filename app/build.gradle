@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.minesweeperhansasattochna'
+    namespace "com.example.minesweeperhandasattochna"
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.example.minesweeperhansasattochna"
+        applicationId "com.example.minesweeperhandasattochna"
         minSdk 24
         targetSdk 34
         versionCode 1

@@ -100,6 +100,9 @@ public class MainActivity extends AppCompatActivity {
             Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
             startActivity(settingsIntent);
         });
+
+        AlarmService alarmService = new AlarmService(this);
+        alarmService.setDailyReminder();
     }
 
     public void onButtonShowPopupWindowClick(View view) {

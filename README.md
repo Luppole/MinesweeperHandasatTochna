@@ -1,7 +1,7 @@
 # **פרויקט מסכם בהנדסת תוכנה - 5 יח"ל**
 ### איתמר פרץ כהן - ת.ז REDACTED
 
-![Alt text](app\src\main\res\drawable\logo_texture.png)
+![Alt text](app/src/main/res/drawable/logo_texture.png)
 
 
 ## פיצ'רים:

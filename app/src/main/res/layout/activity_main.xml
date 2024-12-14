@@ -34,6 +34,21 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="8dp" />
 
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/settingsButton"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:text="SETTINGS"
+        android:background="@drawable/custom_background"
+        android:fontFamily="@font/pixellari"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:stateListAnimator="@animator/button_animation"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="16dp" />
+
+
     <!-- Rules Button -->
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/rulesButton"

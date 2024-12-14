@@ -23,8 +23,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Start background music service
+        startService(new Intent(this, MusicService.class));
+
         // Initialize Firebase Authentication
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance();
 
         // Check if the user is logged in or playing as a guest
         boolean isGuest = getIntent().getBooleanExtra("isGuest", false);
@@ -48,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
         Button profileButton = findViewById(R.id.profileButton);
         Button playGameButton = findViewById(R.id.playGameButton);
         Button storeButton = findViewById(R.id.storeButton);
+        Button settingsButton = findViewById(R.id.settingsButton); // Add Settings Button
 
         // Rules Button Click Listener
         rulesButton.setOnClickListener(v -> {
@@ -59,11 +63,13 @@ public class MainActivity extends AppCompatActivity {
         if (isGuest) {
             logoutButton.setText("Exit");
             logoutButton.setOnClickListener(v -> {
+                stopService(new Intent(this, MusicService.class)); // Stop music service
                 finish(); // Exit the app for guest users
             });
         } else {
             logoutButton.setOnClickListener(v -> {
                 mAuth.signOut(); // Sign out the user
+                stopService(new Intent(this, MusicService.class)); // Stop music service
                 Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
                 startActivity(loginIntent);
                 finish();
@@ -82,20 +88,19 @@ public class MainActivity extends AppCompatActivity {
         // Store Button Click Listener
         storeButton.setOnClickListener(v -> {
             if (mAuth.getCurrentUser() != null) {
-                // User is logged in, allow access to the store
                 Intent intent = new Intent(MainActivity.this, StoreActivity.class);
                 startActivity(intent);
             } else {
-                // Show a toast message and deny access
                 Toast.makeText(MainActivity.this, "You need to log in to access the store.", Toast.LENGTH_SHORT).show();
             }
         });
 
-        // Start the daily game reminder service
-        AlarmService alarmService = new AlarmService(this);
-        alarmService.setDailyReminder();
+        // Settings Button Click Listener
+        settingsButton.setOnClickListener(v -> {
+            Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
+            startActivity(settingsIntent);
+        });
     }
-
 
     public void onButtonShowPopupWindowClick(View view) {
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);

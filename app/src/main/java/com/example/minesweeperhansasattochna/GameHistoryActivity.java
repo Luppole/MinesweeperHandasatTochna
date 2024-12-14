@@ -43,10 +43,7 @@ public class GameHistoryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_game_history);
         ImageView backButton = findViewById(R.id.backButton);
 
-        backButton.setOnClickListener(v -> {
-            Intent intent = new Intent(GameHistoryActivity.this, GameActivity.class);
-            startActivity(intent);
-        });
+        backButton.setOnClickListener(v -> finish());
 
         historyList = findViewById(R.id.historyList);
         difficultySpinner = findViewById(R.id.difficultySpinner);
@@ -77,7 +74,6 @@ public class GameHistoryActivity extends AppCompatActivity {
         }
     }
 
-
     private void setupSpinner() {
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item,
                 new String[]{"All", "Easy", "Medium", "Hard"});
@@ -99,7 +95,7 @@ public class GameHistoryActivity extends AppCompatActivity {
     }
 
     private void loadHistoryData() {
-        historyData = new ArrayList<>(); // Ensure historyData is initialized
+        historyData = new ArrayList<>();
         historyRef.get().addOnSuccessListener(snapshot -> {
             for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                 String difficulty = dataSnapshot.child("difficulty").getValue(String.class);
@@ -112,15 +108,14 @@ public class GameHistoryActivity extends AppCompatActivity {
                 }
             }
 
-            // Sort history by timestamp (latest first)
             historyData.sort(Comparator.comparing(HistoryItem::getTimestamp).reversed());
-            filterHistory("All"); // Show all by default
+            filterHistory("All");
         }).addOnFailureListener(e -> Toast.makeText(this, "Failed to load history.", Toast.LENGTH_SHORT).show());
     }
 
     private void filterHistory(String difficulty) {
         if (historyData == null) {
-            historyData = new ArrayList<>(); // Ensure historyData is not null
+            historyData = new ArrayList<>();
         }
 
         if (difficulty.equals("All")) {
@@ -174,16 +169,27 @@ public class GameHistoryActivity extends AppCompatActivity {
             text1.setText(String.format("%s - %s - %ds", item.getDifficulty(), item.isWon() ? "Win" : "Loss", item.getTime()));
             text2.setText(String.format("Played On: %s", formatTimestamp(item.getTimestamp())));
 
-            // Set background color for win/loss
             convertView.setBackgroundColor(item.isWon() ? Color.parseColor("#4CAF50") : Color.parseColor("#F44336"));
 
-            // Set text color
             text1.setTextColor(Color.WHITE);
             text2.setTextColor(Color.LTGRAY);
 
+            convertView.setOnClickListener(v -> shareGameResult(item));
+
             return convertView;
         }
+    }
 
+    private void shareGameResult(HistoryItem item) {
+        String message = String.format("I %s playing Minesweeper on %s difficulty after %d seconds on %s!",
+                item.isWon() ? "won" : "lost", item.getDifficulty(), item.getTime(), formatTimestamp(item.getTimestamp()));
+
+        Intent sendIntent = new Intent(Intent.ACTION_SEND);
+        sendIntent.setType("text/plain");
+        sendIntent.putExtra(Intent.EXTRA_TEXT, message);
+
+        Intent shareIntent = Intent.createChooser(sendIntent, "Share Game Result");
+        startActivity(shareIntent);
     }
 
     private static class HistoryItem {

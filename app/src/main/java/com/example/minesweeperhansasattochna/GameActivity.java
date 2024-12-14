@@ -101,11 +101,23 @@ public class GameActivity extends AppCompatActivity {
 
         inventoryButton.setOnClickListener(v -> showInventoryPopup());
 
-        gameHistoryButton.setOnClickListener(v -> {
-            animateButtonClick(v); // Animate button click
-            Intent historyIntent = new Intent(GameActivity.this, GameHistoryActivity.class);
-            startActivity(historyIntent);
-        });
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        boolean isAuthenticated = mAuth.getCurrentUser() != null;
+
+        if (isAuthenticated) {
+            gameHistoryButton.setEnabled(true); // Enable button
+            gameHistoryButton.setOnClickListener(v -> {
+                animateButtonClick(v); // Animate button click
+                Intent historyIntent = new Intent(GameActivity.this, GameHistoryActivity.class);
+                startActivity(historyIntent);
+            });
+        } else {
+            gameHistoryButton.setEnabled(false); // Disable button for guests
+            gameHistoryButton.setAlpha(0.5f); // Dim the button to visually indicate it's disabled
+            gameHistoryButton.setOnClickListener(v -> {
+                Toast.makeText(this, "Game history is available only for logged-in users.", Toast.LENGTH_SHORT).show();
+            });
+        }
 
         resetButton.setOnClickListener(v -> {
             animateButtonClick(v); // Animate button click
@@ -155,7 +167,7 @@ public class GameActivity extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> {
                     pointsView.setText("Points: --");
-                    Toast.makeText(this, "Failed to fetch points: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Playing as a guest", Toast.LENGTH_SHORT).show();
                 });
     }
 
@@ -250,11 +262,27 @@ public class GameActivity extends AppCompatActivity {
         button.setOnClickListener(v -> onUseAction.run());
     }
 
+    private void showPopupMessage(String message) {
+        // Inflate the popup layout
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View popupView = inflater.inflate(R.layout.activity_popup_message, null);
 
+        // Set the message
+        TextView popupMessage = popupView.findViewById(R.id.popupMessage);
+        popupMessage.setText(message);
 
+        // Add the popup to the root layout
+        final PopupWindow popupWindow = new PopupWindow(popupView, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, true);
+        popupWindow.setElevation(10);
+        popupWindow.showAtLocation(findViewById(android.R.id.content), Gravity.CENTER, 0, 0);
 
+        // Start fade-out animation
+        popupView.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_out));
 
-    // Updated useHintItem
+        // Dismiss popup after animation
+        popupView.postDelayed(popupWindow::dismiss, 3000); // 3 secs
+    }
+
     private void useHintItem(PopupWindow popupWindow) {
         boolean hintUsed = HintItem.useHint(board, buttons); // Hint logic encapsulated in HintItem
         if (hintUsed) {
@@ -263,13 +291,15 @@ public class GameActivity extends AppCompatActivity {
                 if (currentCount > 0) {
                     userRef.child("items").child("hint").setValue(currentCount - 1)
                             .addOnSuccessListener(aVoid -> {
-                                Toast.makeText(this, "Hint successfully used!", Toast.LENGTH_SHORT).show();
+                                showPopupMessage("Hint Used!");
                                 popupWindow.dismiss(); // Close the inventory after using the item
                             });
                 }
             });
         }
     }
+
+
 
     private void useSuperHintItem(PopupWindow popupWindow) {
         userRef.child("items").child("superHint").get().addOnSuccessListener(snapshot -> {
@@ -279,7 +309,7 @@ public class GameActivity extends AppCompatActivity {
                 if (superHintUsed) {
                     userRef.child("items").child("superHint").setValue(currentCount - 1)
                             .addOnSuccessListener(aVoid -> {
-                                Toast.makeText(this, "Super Hint used successfully! 5 tiles revealed.", Toast.LENGTH_SHORT).show();
+                                showPopupMessage("Super Hint Used!");
                                 popupWindow.dismiss(); // Close the inventory
                             });
                 }
@@ -300,11 +330,9 @@ public class GameActivity extends AppCompatActivity {
                 ShieldItem.activateShield(this); // Activate shield logic
                 userRef.child("items").child("shield").setValue(currentCount - 1)
                         .addOnSuccessListener(aVoid -> {
-                            Toast.makeText(this, "Shield activated!", Toast.LENGTH_SHORT).show();
+                            showPopupMessage("Shield Used!");
                             popupWindow.dismiss(); // Close inventory popup
                         });
-            } else {
-                Toast.makeText(this, "No shields available.", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -316,11 +344,9 @@ public class GameActivity extends AppCompatActivity {
                 MineDetectorItem.revealMinesTemporarily(board, buttons, 2000); // Reveal mines for 2 seconds
                 userRef.child("items").child("mineDetector").setValue(currentCount - 1)
                         .addOnSuccessListener(aVoid -> {
-                            Toast.makeText(this, "Mine Detector activated!", Toast.LENGTH_SHORT).show();
+                            showPopupMessage("Mine Detector Used!");
                             popupWindow.dismiss(); // Close inventory popup
                         });
-            } else {
-                Toast.makeText(this, "No mine detectors available.", Toast.LENGTH_SHORT).show();
             }
         });
     }

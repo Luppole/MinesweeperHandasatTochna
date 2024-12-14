@@ -4,6 +4,7 @@
 <div align="center">
   <img src="app/src/main/res/drawable/logo_texture.png" alt="Logo">
 </div>
+
 ---
 
 ## ✨ **פיצ'רים מרכזיים:**  

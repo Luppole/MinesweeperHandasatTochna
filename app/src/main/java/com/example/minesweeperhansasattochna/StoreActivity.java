@@ -1,8 +1,11 @@
 package com.example.minesweeperhansasattochna;
 
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -86,13 +89,34 @@ public class StoreActivity extends AppCompatActivity {
                                     userRef.child("items").child(itemName).setValue(currentCount + 1)
                                             .addOnSuccessListener(aVoid1 -> {
                                                 pointsTextView.setText("Points: " + userPoints);
-                                                Toast.makeText(this, itemName + " purchased successfully!", Toast.LENGTH_SHORT).show();
+                                                showPopupWindow(itemName + " purchased successfully!");
                                             });
                                 });
                     })
-                    .addOnFailureListener(e -> Toast.makeText(this, "Failed to deduct points.", Toast.LENGTH_SHORT).show());
+                    .addOnFailureListener(e -> showPopupWindow("Failed to deduct points. Please try again."));
         } else {
-            Toast.makeText(this, "Not enough points!", Toast.LENGTH_SHORT).show();
+            showPopupWindow("Not enough points to purchase " + itemName + ".");
         }
     }
+
+    private void showPopupWindow(String message) {
+        // Inflate the popup layout
+        View popupView = getLayoutInflater().inflate(R.layout.activity_popup_message, null);
+
+        // Create the PopupWindow
+        final PopupWindow popupWindow = new PopupWindow(popupView,
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT, true);
+
+        // Set the message
+        TextView popupMessage = popupView.findViewById(R.id.popupMessage);
+        popupMessage.setText(message);
+
+        // Show the popup window
+        popupWindow.showAtLocation(findViewById(android.R.id.content), Gravity.CENTER, 0, 0);
+
+        // Dismiss the popup after 2 seconds
+        popupView.postDelayed(popupWindow::dismiss, 2000);
+    }
+
 }

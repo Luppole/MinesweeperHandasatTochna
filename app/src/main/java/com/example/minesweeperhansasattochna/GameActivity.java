@@ -182,10 +182,10 @@ public class GameActivity extends AppCompatActivity {
         Button closeButton = popupView.findViewById(R.id.closeButton);
 
         // Load inventory items and enable/disable buttons accordingly
-        setupInventoryButton(userRef, "hint", useHintButton, this::useHintItem);
-        setupInventoryButton(userRef, "superHint", useSuperHintButton, this::useSuperHintItem);
-        setupInventoryButton(userRef, "shield", useShieldButton, this::useShieldItem);
-        setupInventoryButton(userRef, "mineDetector", useMineDetectorButton, this::useMineDetectorItem);
+        setupInventoryButton(userRef, "hint", useHintButton, () -> useHintItem(popupWindow));
+        setupInventoryButton(userRef, "superHint", useSuperHintButton, () -> useSuperHintItem(popupWindow));
+        setupInventoryButton(userRef, "shield", useShieldButton, () -> useShieldItem(popupWindow));
+        setupInventoryButton(userRef, "mineDetector", useMineDetectorButton, () -> useMineDetectorItem(popupWindow));
 
         // Close button logic
         closeButton.setOnClickListener(v -> popupWindow.dismiss());
@@ -250,21 +250,12 @@ public class GameActivity extends AppCompatActivity {
         button.setOnClickListener(v -> onUseAction.run());
     }
 
-    private void updateInventoryButton(DatabaseReference userRef, String itemName, Button button) {
-        userRef.child("items").child(itemName).get().addOnSuccessListener(snapshot -> {
-            int itemCount = snapshot.exists() ? snapshot.getValue(Integer.class) : 0;
-            button.setText(itemName + " (" + itemCount + ")");
-            button.setEnabled(itemCount > 0);
-        }).addOnFailureListener(e -> {
-            button.setText(itemName + " (--)");
-            button.setEnabled(false);
-        });
-    }
 
 
 
 
-    private void useHintItem() {
+    // Updated useHintItem
+    private void useHintItem(PopupWindow popupWindow) {
         boolean hintUsed = HintItem.useHint(board, buttons); // Hint logic encapsulated in HintItem
         if (hintUsed) {
             userRef.child("items").child("hint").get().addOnSuccessListener(snapshot -> {
@@ -273,25 +264,28 @@ public class GameActivity extends AppCompatActivity {
                     userRef.child("items").child("hint").setValue(currentCount - 1)
                             .addOnSuccessListener(aVoid -> {
                                 Toast.makeText(this, "Hint successfully used!", Toast.LENGTH_SHORT).show();
+                                popupWindow.dismiss(); // Close the inventory after using the item
                             });
                 }
             });
         }
     }
 
-    private void useSuperHintItem() {
+    private void useSuperHintItem(PopupWindow popupWindow) {
         userRef.child("items").child("superHint").get().addOnSuccessListener(snapshot -> {
             int currentCount = snapshot.exists() ? snapshot.getValue(Integer.class) : 0;
             if (currentCount > 0) {
                 boolean superHintUsed = SuperHintItem.useSuperHint(board, buttons);
                 if (superHintUsed) {
                     userRef.child("items").child("superHint").setValue(currentCount - 1)
-                            .addOnSuccessListener(aVoid -> Toast.makeText(this, "Super Hint used successfully! 5 tiles revealed.", Toast.LENGTH_SHORT).show());
+                            .addOnSuccessListener(aVoid -> {
+                                Toast.makeText(this, "Super Hint used successfully! 5 tiles revealed.", Toast.LENGTH_SHORT).show();
+                                popupWindow.dismiss(); // Close the inventory
+                            });
                 }
             }
         });
     }
-
 
     private boolean shieldActive = false;
 
@@ -299,26 +293,38 @@ public class GameActivity extends AppCompatActivity {
         shieldActive = isActive;
     }
 
-    private void useShieldItem() {
+    private void useShieldItem(PopupWindow popupWindow) {
         userRef.child("items").child("shield").get().addOnSuccessListener(snapshot -> {
             int currentCount = snapshot.exists() ? snapshot.getValue(Integer.class) : 0;
             if (currentCount > 0) {
-                ShieldItem.activateShield(this);
+                ShieldItem.activateShield(this); // Activate shield logic
                 userRef.child("items").child("shield").setValue(currentCount - 1)
-                        .addOnSuccessListener(aVoid -> Toast.makeText(this, "Shield activated!", Toast.LENGTH_SHORT).show());
+                        .addOnSuccessListener(aVoid -> {
+                            Toast.makeText(this, "Shield activated!", Toast.LENGTH_SHORT).show();
+                            popupWindow.dismiss(); // Close inventory popup
+                        });
+            } else {
+                Toast.makeText(this, "No shields available.", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void useMineDetectorItem() {
+    private void useMineDetectorItem(PopupWindow popupWindow) {
         userRef.child("items").child("mineDetector").get().addOnSuccessListener(snapshot -> {
             int currentCount = snapshot.exists() ? snapshot.getValue(Integer.class) : 0;
             if (currentCount > 0) {
-                MineDetectorItem.revealMinesTemporarily(board, buttons, 2000); // 2 seconds
+                MineDetectorItem.revealMinesTemporarily(board, buttons, 2000); // Reveal mines for 2 seconds
                 userRef.child("items").child("mineDetector").setValue(currentCount - 1)
-                        .addOnSuccessListener(aVoid -> Toast.makeText(this, "Mine Detector activated!", Toast.LENGTH_SHORT).show());}
+                        .addOnSuccessListener(aVoid -> {
+                            Toast.makeText(this, "Mine Detector activated!", Toast.LENGTH_SHORT).show();
+                            popupWindow.dismiss(); // Close inventory popup
+                        });
+            } else {
+                Toast.makeText(this, "No mine detectors available.", Toast.LENGTH_SHORT).show();
+            }
         });
     }
+
 
 
 

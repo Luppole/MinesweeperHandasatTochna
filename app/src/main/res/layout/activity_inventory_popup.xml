@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="360dp"
+    android:layout_width="200dp"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="10dp"
@@ -22,12 +22,12 @@
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/useHintButton"
         android:layout_width="100dp"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:text="Use Hint"
         android:layout_margin="3dp"
         android:background="@drawable/custom_background"
         android:textColor="#FFFFFF"
-        android:textSize="17sp"
+        android:textSize="14sp"
         android:fontFamily="@font/pixellari"
         android:paddingHorizontal="10dp"
         android:paddingVertical="5dp" />
@@ -35,10 +35,10 @@
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/useSuperHintButton"
         android:layout_width="100dp"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:text="Use Super Hint"
         android:layout_margin="3dp"
-        android:textSize="15dp"
+        android:textSize="14sp"
         android:background="@drawable/custom_background"
         android:textColor="#FFFFFF"
         android:fontFamily="@font/pixellari"
@@ -48,20 +48,20 @@
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/useShieldButton"
         android:layout_width="100dp"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:text="Use Shield"
         android:layout_margin="3dp"
         android:background="@drawable/custom_background"
         android:textColor="#FFFFFF"
-        android:textSize="15dp"
+        android:textSize="16dp"
         android:fontFamily="@font/pixellari"
         android:paddingHorizontal="10dp"
         android:paddingVertical="5dp" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/useMineDetectorButton"
-        android:layout_width="130dp"
-        android:layout_height="wrap_content"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
         android:text="Use Mine Detector"
         android:layout_margin="3dp"
         android:background="@drawable/custom_background"

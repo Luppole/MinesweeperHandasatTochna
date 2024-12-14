@@ -1,0 +1,23 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#FFFFFF">
+
+    <Button
+        android:id="@+id/backButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Back" />
+
+    <TextView
+        android:id="@+id/rulesTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Rules: \n1. Rule 1 \n2. Rule 2 ..."
+        android:textSize="18sp"
+        android:padding="8dp"
+        android:lineSpacingExtra="4dp" />
+</LinearLayout>

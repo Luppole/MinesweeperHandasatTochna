@@ -1,0 +1,33 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="16dp"
+    android:background="@drawable/custom_background_friend"
+    android:layout_margin="8dp"
+    android:elevation="4dp">
+
+    <!-- Friend Nickname -->
+    <TextView
+        android:id="@+id/friendNameTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:fontFamily="@font/pixellari"
+        android:text="Friend Name"
+        android:textSize="20sp"
+        android:textColor="#FFFFFF"
+        android:paddingEnd="16dp" />
+
+    <!-- Friend Points -->
+    <TextView
+        android:id="@+id/friendPointsTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/pixellari"
+        android:text="Points: 0"
+        android:textSize="18sp"
+        android:textColor="#FFFFFF"
+        android:paddingStart="16dp" />
+</LinearLayout>

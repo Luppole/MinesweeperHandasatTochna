@@ -1,0 +1,9 @@
+<resources>
+    <color name="primary">#6200EE</color>
+    <color name="primaryDark">#3700B3</color>
+    <color name="secondary">#03DAC5</color>
+    <color name="background">#F5F5F5</color>
+    <color name="error">#B00020</color>
+    <color name="textPrimary">#000000</color>
+    <color name="textSecondary">#757575</color>
+</resources>

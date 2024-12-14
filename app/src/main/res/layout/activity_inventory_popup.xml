@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="200dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="10dp"
+    android:background="#627C85"
+    android:gravity="center"> <!-- Center content horizontally -->
+
+    <TextView
+        android:id="@+id/pointsTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="INVENTORY"
+        android:fontFamily="@font/pixellari"
+        android:textSize="20sp"
+        android:textColor="#FFFFFF"
+        android:gravity="center"
+        android:padding="5dp" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/useHintButton"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:text="Use Hint"
+        android:layout_margin="3dp"
+        android:background="@drawable/custom_background"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:fontFamily="@font/pixellari"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="5dp" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/useSuperHintButton"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:text="Use Super Hint"
+        android:layout_margin="3dp"
+        android:textSize="14sp"
+        android:background="@drawable/custom_background"
+        android:textColor="#FFFFFF"
+        android:fontFamily="@font/pixellari"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="5dp" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/useShieldButton"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:text="Use Shield"
+        android:layout_margin="3dp"
+        android:background="@drawable/custom_background"
+        android:textColor="#FFFFFF"
+        android:textSize="16dp"
+        android:fontFamily="@font/pixellari"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="5dp" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/useMineDetectorButton"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:text="Use Mine Detector"
+        android:layout_margin="3dp"
+        android:background="@drawable/custom_background"
+        android:textColor="#FFFFFF"
+        android:fontFamily="@font/pixellari"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="5dp" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/closeButton"
+        android:layout_width="150dp"
+        android:layout_height="30dp"
+        android:text="CLOSE INVENTORY"
+        android:layout_margin="3dp"
+        android:background="@drawable/difficulty_button_hard"
+        android:textColor="#FFFFFF"
+        android:fontFamily="@font/pixellari"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="5dp" />
+</LinearLayout>

@@ -1,0 +1,145 @@
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#35524A">
+
+    <!-- Logged-in User Display -->
+    <TextView
+        android:id="@+id/loggedInTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Logged in with: Guest"
+        android:textSize="16sp"
+        android:fontFamily="@font/pixellari"
+        android:textColor="#FFFFFF"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_margin="16dp" />
+
+    <!-- Welcome Message -->
+    <TextView
+        android:id="@+id/welcomeMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Welcome to Minesweeper!"
+        android:textSize="32sp"
+        android:elevation="10dp"
+        android:fontFamily="@font/pixellari"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        app:layout_constraintTop_toBottomOf="@id/loggedInTextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp" />
+
+    <!-- Rules Button -->
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/rulesButton"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:text="RULES "
+        android:background="@drawable/custom_background_other"
+        android:fontFamily="@font/pixellari"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:padding="8dp"
+        android:textSize="25dp"
+        android:layout_margin="8dp"
+        android:elevation="20dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Button Panel -->
+    <LinearLayout
+        android:id="@+id/buttonPanel"
+        android:layout_width="260dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:elevation="100dp"
+        android:gravity="center_horizontal"
+        app:layout_constraintTop_toBottomOf="@id/welcomeMessage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="#C2E4CB"
+        android:layout_margin="40dp">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/playGameButton"
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
+            android:text="PLAY 🎲"
+            android:elevation="10dp"
+            android:textSize="30dp"
+            android:textAlignment="center"
+            android:background="@drawable/custom_background"
+            android:fontFamily="@font/pixellari"
+            android:textColor="#FFFFFF"
+            android:layout_margin="15dp"
+            android:textStyle="bold"
+            android:stateListAnimator="@animator/button_animation" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/storeButton"
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
+            android:text="STORE 🛒"
+            android:elevation="10dp"
+            android:textSize="30dp"
+            android:background="@drawable/custom_background_store"
+            android:fontFamily="@font/pixellari"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="15dp"
+            android:textStyle="bold"
+            android:stateListAnimator="@animator/button_animation" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/profileButton"
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
+            android:text="PROFILE 🧍"
+            android:elevation="10dp"
+            android:background="@drawable/custom_background_profile"
+            android:fontFamily="@font/pixellari"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="15dp"
+            android:textSize="30dp"
+            android:textStyle="bold"
+            android:stateListAnimator="@animator/button_animation" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/settingsButton"
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
+            android:text="SETTINGS ⚙️"
+            android:background="@drawable/custom_background_settings"
+            android:fontFamily="@font/pixellari"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:textSize="30dp"
+            android:layout_marginBottom="15dp"
+            android:stateListAnimator="@animator/button_animation"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+    </LinearLayout>
+
+    <!-- Sign Out Button -->
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/signOutButton"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:text="SIGN OUT"
+        android:background="@drawable/difficulty_button_hard"
+        android:fontFamily="@font/pixellari"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:textSize="24dp"
+        android:elevation="20dp"
+        android:stateListAnimator="@animator/button_animation"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_margin="16dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

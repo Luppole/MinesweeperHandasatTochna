@@ -28,7 +28,7 @@
             android:fontFamily="@font/pixellari"
             android:textStyle="bold"
             android:gravity="center"
-            android:textColor="#000000"
+            android:textColor="#FFFFFF"
             android:layout_marginBottom="16dp" />
 
         <!-- Email and Nickname -->
@@ -70,6 +70,7 @@
             android:background="@drawable/custom_background"
             android:fontFamily="@font/pixellari"
             android:textColor="#FFFFFF"
+            android:textSize="20dp"
             android:padding="12dp"
             android:layout_marginBottom="16dp" />
 
@@ -87,7 +88,7 @@
                 android:layout_height="wrap_content"
                 android:text="View Statistics"
                 android:fontFamily="@font/pixellari"
-                android:background="@drawable/custom_background_other"
+                android:background="@drawable/custom_background_stats"
                 android:textColor="#FFFFFF"
                 android:layout_marginEnd="8dp"
                 android:padding="12dp" />
@@ -98,7 +99,7 @@
                 android:layout_height="wrap_content"
                 android:text="View Achievements"
                 android:fontFamily="@font/pixellari"
-                android:background="@drawable/custom_background_other"
+                android:background="@drawable/custom_background_stats"
                 android:textColor="#FFFFFF"
                 android:padding="12dp" />
         </LinearLayout>

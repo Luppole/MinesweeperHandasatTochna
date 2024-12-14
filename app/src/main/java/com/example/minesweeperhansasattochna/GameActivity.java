@@ -250,6 +250,18 @@ public class GameActivity extends AppCompatActivity {
         button.setOnClickListener(v -> onUseAction.run());
     }
 
+    private void updateInventoryButton(DatabaseReference userRef, String itemName, Button button) {
+        userRef.child("items").child(itemName).get().addOnSuccessListener(snapshot -> {
+            int itemCount = snapshot.exists() ? snapshot.getValue(Integer.class) : 0;
+            button.setText(itemName + " (" + itemCount + ")");
+            button.setEnabled(itemCount > 0);
+        }).addOnFailureListener(e -> {
+            button.setText(itemName + " (--)");
+            button.setEnabled(false);
+        });
+    }
+
+
 
 
     private void useHintItem() {
@@ -307,6 +319,7 @@ public class GameActivity extends AppCompatActivity {
                         .addOnSuccessListener(aVoid -> Toast.makeText(this, "Mine Detector activated!", Toast.LENGTH_SHORT).show());}
         });
     }
+
 
 
     private void playExplosionSound() {

@@ -49,7 +49,7 @@ public class LeaderboardActivity extends AppCompatActivity {
         // Set load leaderboard button listener
         findViewById(R.id.loadLeaderboardButton).setOnClickListener(v -> loadLeaderboard());
 
-        // Set back button listener
+        // Set back button listen
         backButton.setOnClickListener(v -> onBackPressed());
     }
 

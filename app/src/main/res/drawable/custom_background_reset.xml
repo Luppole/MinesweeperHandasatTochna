@@ -2,16 +2,30 @@
     <!-- Pressed state -->
     <item android:state_pressed="true">
         <shape android:shape="rectangle">
-            <solid android:color="#ADADAD" /> <!-- Dark green when pressed -->
+            <solid android:color="#5E24B8" /> <!-- Darker purple when pressed -->
             <corners android:radius="4dp" />
+            <stroke android:width="2dp" android:color="#4D1573" />
+        </shape>
+    </item>
+
+    <!-- Disabled state -->
+    <item android:state_enabled="false">
+        <shape android:shape="rectangle">
+            <solid android:color="#BDBDBD" /> <!-- Gray for disabled -->
+            <corners android:radius="4dp" />
+            <stroke android:width="2dp" android:color="#9E9E9E" />
         </shape>
     </item>
 
     <!-- Default state -->
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="#AF8040" /> <!-- Green -->
-            <corners android:radius="8dp" />
+            <gradient
+                android:startColor="#C87228"
+                android:endColor="#B8641B"
+                android:angle="270" /> <!-- Gradient for default -->
+            <corners android:radius="4dp" />
+            <stroke android:width="2dp" android:color="#6F4017" />
         </shape>
     </item>
 </selector>

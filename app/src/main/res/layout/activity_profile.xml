@@ -2,7 +2,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#35524A"
+    android:background="@drawable/profile_background"
     android:padding="16dp">
 
     <LinearLayout
@@ -23,39 +23,65 @@
             android:id="@+id/profileTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Profile"
-            android:textSize="58sp"
+            android:layout_marginBottom="1dp"
             android:fontFamily="@font/pixellari"
-            android:textStyle="bold"
             android:gravity="center"
+            android:text="Profile"
             android:textColor="#FFFFFF"
-            android:layout_marginBottom="16dp" />
+            android:textSize="60dp"
+            android:textStyle="bold" />
 
+
+        <!-- Profile Picture -->
+        <ImageView
+            android:id="@+id/profilePicture"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center"
+            android:scaleType="centerCrop"
+            android:src="@drawable/default_profile"
+            android:background="@drawable/circle_background"
+            android:layout_marginBottom="7dp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/changeProfilePictureButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Change Picture"
+            android:layout_gravity="center"
+            android:layout_marginTop="8dp"
+            android:elevation="10dp"
+            android:fontFamily="@font/pixellari"
+            android:background="@drawable/custom_background"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp" />
         <!-- Email and Nickname -->
         <TextView
             android:id="@+id/emailTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/pixellari"
+            android:layout_gravity="center"
             android:text="Email: "
             android:textColor="#FFFFFF"
-            android:textSize="28sp"
-            android:layout_marginBottom="8dp" />
+            android:textSize="30sp"
+            android:layout_margin="16dp" />
 
         <TextView
             android:id="@+id/nicknameTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Nickname: "
+            android:layout_gravity=""
             android:fontFamily="@font/pixellari"
-            android:textColor="@color/textPrimary"
-            android:textSize="18sp"
+            android:textColor="@color/background"
+            android:textSize="24sp"
             android:layout_marginBottom="8dp" />
 
         <!-- Nickname Input -->
         <EditText
             android:id="@+id/nicknameInput"
-            android:layout_width="match_parent"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:fontFamily="@font/pixellari"
             android:hint="Enter new nickname"
@@ -70,7 +96,7 @@
             android:background="@drawable/custom_background"
             android:fontFamily="@font/pixellari"
             android:textColor="#FFFFFF"
-            android:textSize="20dp"
+            android:textSize="16dp"
             android:padding="12dp"
             android:layout_marginBottom="16dp" />
 
@@ -91,6 +117,7 @@
                 android:background="@drawable/custom_background_stats"
                 android:textColor="#FFFFFF"
                 android:layout_marginEnd="8dp"
+                android:textSize="16dp"
                 android:padding="12dp" />
 
             <androidx.appcompat.widget.AppCompatButton
@@ -99,11 +126,17 @@
                 android:layout_height="wrap_content"
                 android:text="View Achievements"
                 android:fontFamily="@font/pixellari"
+                android:textSize="16dp"
                 android:background="@drawable/custom_background_stats"
                 android:textColor="#FFFFFF"
                 android:padding="12dp" />
         </LinearLayout>
 
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="25dp" >
+
+        </Space>
         <!-- Friends List Section -->
         <TextView
             android:id="@+id/friendsListTitle"
@@ -119,10 +152,15 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/friendsRecyclerView"
-            android:layout_width="match_parent"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:background="#627C85"
+            android:background="#EAEDF0"
             android:padding="8dp" />
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="45dp" >
+        </Space>
 
         <ProgressBar
             android:id="@+id/loadingIndicator"
@@ -147,7 +185,7 @@
 
         <EditText
             android:id="@+id/addFriendInput"
-            android:layout_width="match_parent"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:fontFamily="@font/pixellari"
             android:hint="Enter friend's email"

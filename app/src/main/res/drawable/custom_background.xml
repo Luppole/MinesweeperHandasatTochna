@@ -1,17 +1,37 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
+
     <!-- Pressed state -->
     <item android:state_pressed="true">
         <shape android:shape="rectangle">
-            <solid android:color="#ADADAD" /> <!-- Dark green when pressed -->
+            <gradient
+                android:startColor="#388E3C"
+                android:endColor="#2E7D32"
+                android:angle="270" /> <!-- Gradient for pressed state -->
             <corners android:radius="4dp" />
+            <stroke android:width="2dp" android:color="#1B5E20" />
+        </shape>
+    </item>
+
+    <!-- Disabled state -->
+    <item android:state_enabled="false">
+        <shape android:shape="rectangle">
+            <solid android:color="#B0BEC5" /> <!-- Gray color when disabled -->
+            <corners android:radius="4dp" />
+            <stroke android:width="2dp" android:color="#90A4AE" />
         </shape>
     </item>
 
     <!-- Default state -->
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="#4CAF50" /> <!-- Green -->
-            <corners android:radius="8dp" />
+            <gradient
+                android:startColor="#66BB6A"
+                android:endColor="#4CAF50"
+                android:angle="270" /> <!-- Gradient for default state -->
+            <corners android:radius="4dp" />
+            <stroke android:width="2dp" android:color="#388E3C" />
+            <padding android:left="10dp" android:right="10dp" android:top="5dp" android:bottom="5dp" />
         </shape>
     </item>
+
 </selector>

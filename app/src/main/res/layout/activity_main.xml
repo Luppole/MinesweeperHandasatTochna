@@ -44,6 +44,7 @@
         android:fontFamily="@font/pixellari"
         android:textColor="#FFFFFF"
         android:textStyle="bold"
+        android:textAlignment="center"
         android:padding="8dp"
         android:textSize="25dp"
         android:layout_margin="8dp"

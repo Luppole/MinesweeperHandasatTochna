@@ -266,6 +266,8 @@ public class GameActivity extends AppCompatActivity {
         // Inflate the popup layout
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View popupView = inflater.inflate(R.layout.activity_popup_message, null);
+        popupView.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in));
+
 
         // Set the message
         TextView popupMessage = popupView.findViewById(R.id.popupMessage);
@@ -277,14 +279,14 @@ public class GameActivity extends AppCompatActivity {
         popupWindow.showAtLocation(findViewById(android.R.id.content), Gravity.CENTER, 0, 0);
 
         // Start fade-out animation
-        popupView.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_out));
+        popupView.clearAnimation();
 
         // Dismiss popup after animation
         popupView.postDelayed(popupWindow::dismiss, 3000); // 3 secs
     }
 
     private void useHintItem(PopupWindow popupWindow) {
-        boolean hintUsed = HintItem.useHint(board, buttons); // Hint logic encapsulated in HintItem
+        boolean hintUsed = HintItem.useHint(board, buttons, gameRunning); // Hint logic encapsulated in HintItem
         if (hintUsed) {
             userRef.child("items").child("hint").get().addOnSuccessListener(snapshot -> {
                 int currentCount = snapshot.exists() ? snapshot.getValue(Integer.class) : 0;
@@ -305,7 +307,7 @@ public class GameActivity extends AppCompatActivity {
         userRef.child("items").child("superHint").get().addOnSuccessListener(snapshot -> {
             int currentCount = snapshot.exists() ? snapshot.getValue(Integer.class) : 0;
             if (currentCount > 0) {
-                boolean superHintUsed = SuperHintItem.useSuperHint(board, buttons);
+                boolean superHintUsed = SuperHintItem.useSuperHint(board, buttons, gameRunning);
                 if (superHintUsed) {
                     userRef.child("items").child("superHint").setValue(currentCount - 1)
                             .addOnSuccessListener(aVoid -> {
@@ -326,7 +328,7 @@ public class GameActivity extends AppCompatActivity {
     private void useShieldItem(PopupWindow popupWindow) {
         userRef.child("items").child("shield").get().addOnSuccessListener(snapshot -> {
             int currentCount = snapshot.exists() ? snapshot.getValue(Integer.class) : 0;
-            if (currentCount > 0) {
+            if (currentCount > 0 && gameRunning) {
                 ShieldItem.activateShield(this); // Activate shield logic
                 userRef.child("items").child("shield").setValue(currentCount - 1)
                         .addOnSuccessListener(aVoid -> {
@@ -340,7 +342,7 @@ public class GameActivity extends AppCompatActivity {
     private void useMineDetectorItem(PopupWindow popupWindow) {
         userRef.child("items").child("mineDetector").get().addOnSuccessListener(snapshot -> {
             int currentCount = snapshot.exists() ? snapshot.getValue(Integer.class) : 0;
-            if (currentCount > 0) {
+            if (currentCount > 0 && gameRunning) {
                 MineDetectorItem.revealMinesTemporarily(board, buttons, 2000); // Reveal mines for 2 seconds
                 userRef.child("items").child("mineDetector").setValue(currentCount - 1)
                         .addOnSuccessListener(aVoid -> {
@@ -350,9 +352,6 @@ public class GameActivity extends AppCompatActivity {
             }
         });
     }
-
-
-
 
     private void playExplosionSound() {
         if (explosionSound == null) {

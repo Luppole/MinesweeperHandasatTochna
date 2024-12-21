@@ -7,7 +7,11 @@ import java.util.Collections;
 import java.util.List;
 
 public class SuperHintItem {
-    public static boolean useSuperHint(Cell[][] board, Button[][] buttons) {
+    public static boolean useSuperHint(Cell[][] board, Button[][] buttons, boolean gameActivity) {
+        if(!gameActivity) {
+            return false;
+        }
+
         List<int[]> nonBombTiles = new ArrayList<>();
 
         // Collect all non-bomb tile coordinates

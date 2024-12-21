@@ -1,5 +1,5 @@
 <animated-rotate
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:drawable="@drawable/flag_texture"
-    android:pivotX="50%"
-    android:pivotY="50%" />
+    android:pivotX="40%"
+    android:pivotY="40%" />

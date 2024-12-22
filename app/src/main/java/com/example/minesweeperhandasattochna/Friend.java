@@ -3,12 +3,14 @@ package com.example.minesweeperhandasattochna;
 public class Friend {
     private String name;
     private int points;
-    private String profilePicture; // Base64-encoded image or URL
+    private String profilePicture;
+    private String email;
 
-    public Friend(String name, int points, String profilePicture) {
+    public Friend(String name, int points, String profilePicture, String email) {
         this.name = name;
         this.points = points;
         this.profilePicture = profilePicture;
+        this.email = email;
     }
 
     public String getName() {
@@ -21,5 +23,9 @@ public class Friend {
 
     public String getProfilePicture() {
         return profilePicture;
+    }
+
+    public String getEmail() {
+        return email;
     }
 }

@@ -20,10 +20,12 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.gridlayout.widget.GridLayout;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -34,7 +36,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Random;
 
-public class GameActivity extends AppCompatActivity {
+public class GameActivity extends AppCompatActivity implements SensorEventListener {
 
     private Cell[][] board;
     private int ROWS, COLS, NUM_MINES;
@@ -50,6 +52,10 @@ public class GameActivity extends AppCompatActivity {
     private DatabaseReference userRef, leaderboardRef;
     private String difficulty;
     private MediaPlayer explosionSound;
+    private SensorManager sensorManager;
+    private Sensor accelerometer;
+    private static final float SHAKE_THRESHOLD = 12.0f;
+    private long lastShakeTime = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +104,17 @@ public class GameActivity extends AppCompatActivity {
             Intent leaderboardIntent = new Intent(GameActivity.this, LeaderboardActivity.class);
             startActivity(leaderboardIntent);
         });
+
+        // Initialize SensorManager and Accelerometer
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        if (sensorManager != null) {
+            accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+            if (accelerometer != null) {
+                sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+            } else {
+                Toast.makeText(this, "Accelerometer not available", Toast.LENGTH_SHORT).show();
+            }
+        }
 
         inventoryButton.setOnClickListener(v -> showInventoryPopup());
 
@@ -156,6 +173,51 @@ public class GameActivity extends AppCompatActivity {
                 break;
         }
         bombsLeft = NUM_MINES; // Initialize bombs left
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            float x = event.values[0];
+            float y = event.values[1];
+            float z = event.values[2];
+
+            double acceleration = Math.sqrt(x * x + y * y + z * z) - SensorManager.GRAVITY_EARTH;
+            if (acceleration > SHAKE_THRESHOLD) {
+                long currentTime = System.currentTimeMillis();
+                if (currentTime - lastShakeTime > 1000) { // Prevent multiple triggers
+                    lastShakeTime = currentTime;
+                    onShakeDetected();
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (sensorManager != null) {
+            sensorManager.unregisterListener(this);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (sensorManager != null && accelerometer != null) {
+            sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        }
+    }
+
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        // Not used for this implementation
+    }
+
+    private void onShakeDetected() {
+        // Action to open inventory
+        showInventoryPopup();
     }
 
 

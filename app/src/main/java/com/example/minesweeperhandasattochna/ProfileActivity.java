@@ -193,8 +193,13 @@ public class ProfileActivity extends AppCompatActivity {
                         int points = friendDataSnapshot.child("points").exists()
                                 ? friendDataSnapshot.child("points").getValue(Integer.class)
                                 : 0;
-                        String displayName = (nickname != null && !nickname.isEmpty()) ? nickname : friendKey.replace(",", ".");
-                        friendList.add(new Friend(displayName, points, profilePicture));
+
+                        // Extract email from the friendKey (reverse the .replace() used to store it)
+                        String email = friendKey.replace(",", ".");
+
+                        // Use all four parameters to construct the Friend object
+                        String displayName = (nickname != null && !nickname.isEmpty()) ? nickname : email;
+                        friendList.add(new Friend(displayName, points, profilePicture, email));
                         friendAdapter.notifyDataSetChanged();
                     }).addOnFailureListener(e -> {
                         Toast.makeText(this, "Failed to load friend data.", Toast.LENGTH_SHORT).show();
@@ -206,6 +211,7 @@ public class ProfileActivity extends AppCompatActivity {
             Toast.makeText(this, "Failed to load friends list.", Toast.LENGTH_SHORT).show();
         });
     }
+
 
     private void saveNickname() {
         String newNickname = nicknameInput.getText().toString().trim();

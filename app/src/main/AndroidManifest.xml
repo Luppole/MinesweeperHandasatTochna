@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
 <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.hardware.sensor.accelerometer" />
 
     <application
         android:allowBackup="true"
@@ -43,6 +44,7 @@
         <activity android:name=".RulesActivity" />
         <activity android:name=".LoadingActivity" android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity android:name=".AchievementsActivity" />
+        <activity android:name=".FriendProfileActivity" />
         <activity android:name=".SettingsActivity" />
 
         <!-- Register Notification Reminder Service -->

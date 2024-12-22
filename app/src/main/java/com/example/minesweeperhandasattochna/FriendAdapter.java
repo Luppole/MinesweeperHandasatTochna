@@ -1,9 +1,7 @@
 package com.example.minesweeperhandasattochna;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Base64;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,55 +11,62 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 
 public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendViewHolder> {
-    private ArrayList<Friend> friendsList;
-    private Context context;
 
-    public FriendAdapter(ArrayList<Friend> friendsList, Context context) {
-        this.friendsList = friendsList;
+    private final ArrayList<Friend> friendList;
+    private final Context context;
+
+    public FriendAdapter(ArrayList<Friend> friendList, Context context) {
+        this.friendList = friendList;
         this.context = context;
     }
 
     @NonNull
     @Override
     public FriendViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_friend, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_friend, parent, false);
         return new FriendViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull FriendViewHolder holder, int position) {
-        Friend friend = friendsList.get(position);
-        holder.nameTextView.setText(friend.getName());
-        holder.pointsTextView.setText("Points: " + friend.getPoints());
+        Friend friend = friendList.get(position);
 
-        // Decode Base64 and set profile picture
-        String profilePicture = friend.getProfilePicture();
-        if (profilePicture != null && !profilePicture.isEmpty()) {
-            byte[] decodedString = Base64.decode(profilePicture, Base64.DEFAULT);
-            Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-            holder.profileImageView.setImageBitmap(decodedBitmap);
+        holder.friendNameTextView.setText(friend.getName());
+        holder.friendPointsTextView.setText("Points: " + friend.getPoints());
+
+        if (friend.getProfilePicture() != null) {
+            Glide.with(context).load(friend.getProfilePicture()).into(holder.friendProfilePicture);
         } else {
-            holder.profileImageView.setImageResource(R.drawable.default_profile); // Default image
+            holder.friendProfilePicture.setImageResource(R.drawable.default_profile);
         }
+
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, FriendProfileActivity.class);
+            intent.putExtra("friendEmail", friend.getEmail());
+            context.startActivity(intent);
+        });
     }
 
     @Override
     public int getItemCount() {
-        return friendsList.size();
+        return friendList.size();
     }
 
     static class FriendViewHolder extends RecyclerView.ViewHolder {
-        TextView nameTextView, pointsTextView;
-        ImageView profileImageView;
+
+        TextView friendNameTextView, friendPointsTextView;
+        ImageView friendProfilePicture;
 
         public FriendViewHolder(@NonNull View itemView) {
             super(itemView);
-            nameTextView = itemView.findViewById(R.id.friendNameTextView);
-            pointsTextView = itemView.findViewById(R.id.friendPointsTextView);
-            profileImageView = itemView.findViewById(R.id.friendProfileImageView);
+            friendNameTextView = itemView.findViewById(R.id.friendNameTextView);
+            friendPointsTextView = itemView.findViewById(R.id.friendPointsTextView);
+            friendProfilePicture = itemView.findViewById(R.id.friendProfilePicture);
         }
     }
 }

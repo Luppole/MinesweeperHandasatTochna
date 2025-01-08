@@ -69,3 +69,13 @@
 ---
 
 ### **© כל הזכויות שמורות לאיתמר (מי שגונב מניאק) © © ©**
+
+Shared Preferences
+Camera / Gallery
+Broadcast Reciever
+TTS // To Do
+Sensors
+Firebase
+Service Class
+Alarm Manager
+API // To Do

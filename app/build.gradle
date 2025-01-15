@@ -40,6 +40,8 @@ dependencies {
     implementation libs.activity
     implementation libs.constraintlayout
     implementation libs.gridlayout
+    implementation libs.play.services.games
+    implementation libs.play.services.auth
 }
 
 apply plugin: 'com.google.gms.google-services'

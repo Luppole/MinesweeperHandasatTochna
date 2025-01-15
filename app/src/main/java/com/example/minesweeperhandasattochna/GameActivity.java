@@ -21,6 +21,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.hardware.Sensor;
+import android.speech.tts.TextToSpeech;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
@@ -29,7 +30,6 @@ import androidx.gridlayout.widget.GridLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -53,6 +53,8 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
     private String difficulty;
     private MediaPlayer explosionSound;
     private SensorManager sensorManager;
+    private TextToSpeech ttsClient;
+    private String ttsText;
     private Sensor accelerometer;
     private static final float SHAKE_THRESHOLD = 12.0f;
     private long lastShakeTime = 0;
@@ -74,12 +76,23 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
         Button gameHistoryButton = findViewById(R.id.gameHistoryButton);
         Button resetButton = findViewById(R.id.resetButton);
 
+        ttsClient = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if(status != TextToSpeech.ERROR)
+                    ttsClient.setLanguage(Locale.ENGLISH);
+            }
+        });
+
         // Get difficulty level
         difficulty = getIntent().getStringExtra("difficulty");
         if (difficulty == null) {
             difficulty = "easy";
         }
 
+        ttsText = "Difficulty chosen was " + difficulty;
+
+        ttsClient.speak(ttsText, TextToSpeech.QUEUE_FLUSH, null);
         // Set up home button
         homeButton.setOnClickListener(v -> {
             Intent homeIntent = new Intent(GameActivity.this, MainActivity.class);
@@ -233,12 +246,6 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
                 });
     }
 
-    private String capitalize(String text) {
-        if (text == null || text.isEmpty()) return text;
-        return text.substring(0, 1).toUpperCase() + text.substring(1);
-    }
-
-
     private void showInventoryPopup() {
         // Inflate the inventory popup layout
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -345,6 +352,9 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
 
         // Dismiss popup after animation
         popupView.postDelayed(popupWindow::dismiss, 3000); // 3 secs
+
+        ttsText = message;
+        ttsClient.speak(ttsText, TextToSpeech.QUEUE_FLUSH, null);
     }
 
     private void useHintItem(PopupWindow popupWindow) {
@@ -413,6 +423,7 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
                         });
             }
         });
+
     }
 
     private void playExplosionSound() {

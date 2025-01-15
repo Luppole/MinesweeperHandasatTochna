@@ -70,12 +70,12 @@
 
 ### **© כל הזכויות שמורות לאיתמר (מי שגונב מניאק) © © ©**
 
-Shared Preferences
-Camera / Gallery
-Broadcast Reciever
-TTS // To Do
-Sensors
-Firebase
-Service Class
-Alarm Manager
-API // To Do
+Shared Preferences - Done
+Camera / Gallery - Done
+Broadcast Reciever - done
+TTS - Done
+Sensors - Done
+Firebase - Done
+Service Class - Done
+Alarm Manager - Done
+API // To do ?
